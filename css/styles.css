@@ -176,7 +176,7 @@ body[data-theme="estadio"] {
     radial-gradient(at 0% 0%,   rgba(46,125,50,0.25)  0, transparent 50%),
     radial-gradient(at 100% 100%, rgba(27,94,32,0.2) 0, transparent 50%),
     radial-gradient(at 50% 100%, rgba(129,199,132,0.25) 0, transparent 40%);
-  color: #0f2510;
+  color: #071209;
 }
 
 /* ── Inputs ─────────────────────────────────────────────────────── */
@@ -188,7 +188,7 @@ body[data-theme="estadio"] input[type=url],
 body[data-theme="estadio"] input[type=datetime-local] {
   background: rgba(0,60,10,.06);
   border-color: rgba(0,80,20,.25);
-  color: #0f2510;
+  color: #071209;
 }
 body[data-theme="estadio"] input:focus {
   border-color: #1b5e20;
@@ -198,7 +198,7 @@ body[data-theme="estadio"] input:focus {
 body[data-theme="estadio"] .si {
   background: rgba(0,60,10,.07);
   border-color: rgba(0,80,20,.22);
-  color: #0f2510;
+  color: #071209;
 }
 body[data-theme="estadio"] .si:focus {
   border-color: #1b5e20;

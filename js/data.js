@@ -152,12 +152,12 @@ var DEF = {
   // Playoff confirmations — set by admin after finals (March 31)
   // Each entry: { teamA, teamB, confirmed, winner }
   playoffs: {
-    "Playoff A": { teamA:"Bosnia & Herz.", teamB:"Italy",    confirmed:false, winner:"" },
-    "Playoff B": { teamA:"Sweden",         teamB:"Poland",   confirmed:false, winner:"" },
-    "Playoff C": { teamA:"Kosovo",         teamB:"Turkey",   confirmed:false, winner:"" },
-    "Playoff D": { teamA:"Denmark",        teamB:"Czechia",  confirmed:false, winner:"" },
-    "Playoff 1": { teamA:"Jamaica",        teamB:"DR Congo", confirmed:false, winner:"" },
-    "Playoff 2": { teamA:"Bolivia",        teamB:"Iraq",     confirmed:false, winner:"" }
+    "Playoff A": { teamA:"Bosnia & Herz.", teamB:"Italy",    confirmed:true, winner:"Bosnia & Herz." },
+    "Playoff B": { teamA:"Sweden",         teamB:"Poland",   confirmed:true, winner:"Sweden" },
+    "Playoff C": { teamA:"Kosovo",         teamB:"Turkey",   confirmed:true, winner:"Turkey" },
+    "Playoff D": { teamA:"Denmark",        teamB:"Czechia",  confirmed:true, winner:"Czechia" },
+    "Playoff 1": { teamA:"Jamaica",        teamB:"DR Congo", confirmed:true, winner:"DR Congo" },
+    "Playoff 2": { teamA:"Bolivia",        teamB:"Iraq",     confirmed:true, winner:"Iraq" }
   },
   scoring: {
     groupResult: 3,

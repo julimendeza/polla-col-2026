@@ -34,7 +34,7 @@ function Nav(p) {
             padding:"5px 8px", borderRadius:7, fontSize:12, fontWeight:600,
             cursor:"pointer", border:"none", transition:"all .15s",
             background: active ? thm.accent : "transparent",
-            color: active ? thm.onAccent : thm.inv(.6),
+            color: active ? thm.onAccent : thm.inv(.75),
             fontFamily:"'DM Sans',sans-serif", whiteSpace:"nowrap"
           }}>
             <span class="nav-label">${x.full}</span>

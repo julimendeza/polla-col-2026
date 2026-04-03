@@ -21,7 +21,7 @@ function AdminView(p) {
         onInput=${function(e){ setPw(e.target.value); }}
         onKeyDown=${function(e){ if(e.key==="Enter") tryAuth(); }}
         placeholder="Password" style=${{ marginBottom:12 }}/>
-      ${authErr && React.createElement('p', {style:{color:'#f87171',fontSize:13,marginBottom:12}}, authErr)}
+      ${authErr && React.createElement('p', {style:{color:thm.id==="estadio"?'#991b1b':'#f87171',fontSize:13,marginBottom:12}}, authErr)}
       <${Btn} onClick=${tryAuth} full=${true} sx=${{ padding:"13px", fontSize:15 }}>Enter</${Btn}>
     </${Card}>
   </div>`;
@@ -41,8 +41,8 @@ function AdminView(p) {
     <div style=${{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:18}}>
       <h2 className="bb" style=${{ fontSize:26, margin:0 }}>\ud83d\udee0 ${t.adminTitle}</h2>
       <div style=${{display:"flex",alignItems:"center",gap:6,fontSize:11,
-        color:p.dbStatus==="firebase"?"#4ade80":thm.inv(.35)}}>
-        <span style=${{width:7,height:7,borderRadius:"50%",background:p.dbStatus==="firebase"?"#4ade80":thm.inv(.25),display:"inline-block"}}></span>
+        color:p.dbStatus==="firebase"?thm.id==="estadio"?"#166534":"#4ade80":thm.inv(.35)}}>
+        <span style=${{width:7,height:7,borderRadius:"50%",background:p.dbStatus==="firebase"?thm.id==="estadio"?"#166534":"#4ade80":thm.inv(.25),display:"inline-block"}}></span>
         ${p.dbStatus==="firebase"?"Firebase":"Local only"}
       </div>
     </div>
@@ -113,7 +113,7 @@ function AdminResults(p) {
     <div style=${{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
       <p style=${{fontSize:13,color:thm.inv(.4)}}>${t.enterRes}</p>
       <div style=${{display:"flex",alignItems:"center",gap:10}}>
-        ${msg&&html`<span style=${{color:"#4ade80",fontSize:13}}>${msg}</span>`}
+        ${msg&&html`<span style=${{color:thm.id==="estadio"?"#166534":"#4ade80",fontSize:13}}>${msg}</span>`}
         <${Btn} onClick=${save} sx=${{padding:"8px 18px",fontSize:14}}>${t.saveBtn}</${Btn}>
       </div>
     </div>
@@ -155,9 +155,9 @@ function AdminResults(p) {
 
     ${sec==="knockout"&&html`<${Card}>
       <div style=${{marginBottom:10,padding:"8px 12px",borderRadius:10,fontSize:11,
-        background:r32info.complete?"rgba(74,222,128,.07)":thm.a(.07),
-        border:"1px solid "+(r32info.complete?"rgba(74,222,128,.2)":thm.a(.2)),
-        color:r32info.complete?"#4ade80":thm.a(.8)}}>
+        background:r32info.complete?thm.id==="estadio"?"rgba(22,101,52,.1)":"rgba(74,222,128,.07)":thm.a(.07),
+        border:"1px solid "+(r32info.complete?thm.id==="estadio"?"rgba(22,101,52,.25)":"rgba(74,222,128,.2)":thm.a(.2)),
+        color:r32info.complete?thm.id==="estadio"?"#166534":"#4ade80":thm.a(.8)}}>
         ${r32info.complete?"- "+t.r32ok:"- "+t.r32missing+" ("+r32info.groupsDone+"/12)"}
       </div>
       <div style=${{display:"flex",gap:4,flexWrap:"wrap",marginBottom:14}}>
@@ -169,9 +169,9 @@ function AdminResults(p) {
           var done=filled===total&&total>0;
           return html`<button key=${rd.id} onClick=${function(){setActiveKO(rd.id);}} style=${{
             padding:"5px 10px",borderRadius:8,fontSize:11,fontWeight:700,cursor:"pointer",
-            border:"1.5px solid "+(activeKO===rd.id?thm.accent:done?"rgba(74,222,128,.4)":thm.inv(.1)),
-            background:activeKO===rd.id?thm.accent:done?"rgba(74,222,128,.08)":"transparent",
-            color:activeKO===rd.id?"#000":done?"#4ade80":thm.inv(.5),
+            border:"1.5px solid "+(activeKO===rd.id?thm.accent:done?thm.id==="estadio"?"rgba(22,101,52,.5)":"rgba(74,222,128,.4)":thm.inv(.1)),
+            background:activeKO===rd.id?thm.accent:done?thm.id==="estadio"?"rgba(22,101,52,.1)":"rgba(74,222,128,.08)":"transparent",
+            color:activeKO===rd.id?"#000":done?thm.id==="estadio"?"#166534":"#4ade80":thm.inv(.5),
             fontFamily:"'DM Sans',sans-serif"
           }}>${done&&activeKO!==rd.id?"- ":""}${rd.label} (${filled}/${total})</button>`;
         })}
@@ -263,7 +263,7 @@ function AdminParts(p) {
               fontSize:11,fontWeight:600,fontFamily:"'DM Sans',sans-serif",whiteSpace:"nowrap"
             }}>\ud83d\udcca PDF</button>
             <button onClick=${function(){ del(px.id); }} style=${{
-              background:"none", border:"none", color:"#f87171", fontSize:20, cursor:"pointer", opacity:.55, padding:4
+              background:"none", border:"none", color:thm.id==="estadio"?"#991b1b":"#f87171", fontSize:20, cursor:"pointer", opacity:.55, padding:4
             }}>\u00d7</button>
           </div>
         </div>
@@ -492,18 +492,18 @@ function AdminPlayoffs(p) {
 
         return html`<div key=${key} style=${{
           borderRadius:14,padding:"14px 16px",
-          background:confirmed?"rgba(74,222,128,.06)":thm.inv(.04),
+          background:confirmed?thm.id==="estadio"?"rgba(22,101,52,.08)":"rgba(74,222,128,.06)":thm.inv(.04),
           border:"1.5px solid "+(confirmed?"rgba(74,222,128,.25)":thm.inv(.09))
         }}>
           <div style=${{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
             <div>
-              <span style=${{fontWeight:700,fontSize:14,color:confirmed?"#4ade80":thm.accent}}>${key}</span>
+              <span style=${{fontWeight:700,fontSize:14,color:confirmed?thm.id==="estadio"?"#166534":"#4ade80":thm.accent}}>${key}</span>
               <span style=${{fontSize:11,color:thm.inv(.3),marginLeft:8}}>
                 ${es?"Grupo":"Group"} ${grp}
               </span>
             </div>
             ${confirmed&&html`<div style=${{display:"flex",alignItems:"center",gap:6,fontSize:11}}>
-              <span style=${{color:"#4ade80"}}>\u2713 ${val.winner}</span>
+              <span style=${{color:thm.id==="estadio"?"#166534":"#4ade80"}}>\u2713 ${val.winner}</span>
               <button onClick=${function(){ unconfirm(key); }} style=${{
                 background:"none",border:"none",color:thm.inv(.3),
                 cursor:"pointer",fontSize:11,fontFamily:"'DM Sans',sans-serif",padding:"2px 6px",
@@ -544,12 +544,12 @@ function AdminPlayoffs(p) {
     </div>
 
     ${msg&&html`<div style=${{marginTop:14,padding:"10px 14px",borderRadius:10,
-      background:"rgba(74,222,128,.1)",border:"1px solid rgba(74,222,128,.3)",
-      fontSize:13,color:"#4ade80"}}>${msg}</div>`}
+      background:thm.id==="estadio"?"rgba(22,101,52,.15)":"rgba(74,222,128,.1)",border:"1px solid rgba(74,222,128,.3)",
+      fontSize:13,color:thm.id==="estadio"?"#166534":"#4ade80"}}>${msg}</div>`}
 
     ${confirmedCount===total&&html`<div style=${{marginTop:16,padding:"14px",borderRadius:12,
-      background:"rgba(74,222,128,.08)",border:"1px solid rgba(74,222,128,.25)",
-      fontSize:13,color:"#4ade80",textAlign:"center",lineHeight:1.7}}>
+      background:thm.id==="estadio"?"rgba(22,101,52,.1)":"rgba(74,222,128,.08)",border:"1px solid rgba(74,222,128,.25)",
+      fontSize:13,color:thm.id==="estadio"?"#166534":"#4ade80",textAlign:"center",lineHeight:1.7}}>
       \u2705 ${es?"Todos los equipos confirmados. Los nombres se han actualizado en toda la app y todos los participantes pueden actualizar sus predicciones.":"All teams confirmed. Names are now live across the whole app — remind participants to update their predictions!"}
     </div>`}
   </div>`;
@@ -645,7 +645,7 @@ function AdminPicks(p) {
       : reached ? "rgba(74,222,128,"+(0.15+ratio*0.5)+")"
       : thm.a(0.1+ratio*0.5);
     var color = v===0 ? thm.inv(.12)
-      : reached ? "#4ade80"
+      : reached ? thm.id==="estadio"?"#166534":"#4ade80"
       : v===maxPer[colKey] ? "#fff" : thm.accent;
     return {padding:"6px 4px",textAlign:"center",background:bg,borderRadius:4,
       fontWeight:v>0?700:400,color:color,fontSize:12,cursor:"pointer"};
@@ -660,7 +660,7 @@ function AdminPicks(p) {
       <div style=${{fontSize:12,color:thm.inv(.35)}}>
         ${human.length} ${es?"participantes (sin Claude)":"participants (excl. Claude)"}
         \u00a0\u00b7\u00a0
-        <span style=${{color:"#4ade80"}}>\u25a6</span> = ${es?"clasificado real":"actual result"}
+        <span style=${{color:thm.id==="estadio"?"#166534":"#4ade80"}}>\u25a6</span> = ${es?"clasificado real":"actual result"}
         \u00a0
         <span style=${{color:thm.accent}}>\u25a6</span> = ${es?"prediccion":"prediction"}
       </div>
@@ -745,7 +745,7 @@ function AdminStats(p) {
     {key:"thirdMatch",label:"3rd M",   color:"#f472b6"},
     {key:"final",     label:"Final",   color:thm.accent},
     {key:"thirdWin",  label:"3rd W",   color:"#e879f9"},
-    {key:"champion",  label:"Champ",   color:"#4ade80"},
+    {key:"champion",  label:"Champ",   color:thm.id==="estadio"?"#166534":"#4ade80"},
   ];
 
   // Find max per column for color intensity
@@ -923,9 +923,9 @@ function AdminAccess(p) {
     ${accessMode!=="off"&&html`<div>
 
       <div style=${{display:"flex",gap:10,marginBottom:16}}>
-        <div style=${{flex:1,padding:"12px 16px",borderRadius:12,background:"rgba(74,222,128,.07)",
+        <div style=${{flex:1,padding:"12px 16px",borderRadius:12,background:thm.id==="estadio"?"rgba(22,101,52,.1)":"rgba(74,222,128,.07)",
           border:"1px solid rgba(74,222,128,.2)",textAlign:"center"}}>
-          <div style=${{fontWeight:800,fontSize:22,color:"#4ade80"}}>${unused}</div>
+          <div style=${{fontWeight:800,fontSize:22,color:thm.id==="estadio"?"#166534":"#4ade80"}}>${unused}</div>
           <div style=${{fontSize:11,color:thm.inv(.4)}}>Unused PINs</div>
         </div>
         <div style=${{flex:1,padding:"12px 16px",borderRadius:12,background:thm.a(.07),
@@ -959,7 +959,7 @@ function AdminAccess(p) {
         </div>`}
         <div style=${{marginTop:10}}>
           <${Btn} onClick=${addPin} sx=${{padding:"9px 20px"}}>Add PIN</${Btn}>
-          ${msg&&html`<span style=${{marginLeft:12,fontSize:13,color:msg.startsWith("\u274c")?"#f87171":"#4ade80"}}>${msg}</span>`}
+          ${msg&&html`<span style=${{marginLeft:12,fontSize:13,color:msg.startsWith("\u274c")?thm.id==="estadio"?"#991b1b":"#f87171":thm.id==="estadio"?"#166534":"#4ade80"}}>${msg}</span>`}
         </div>
       </div>
 
@@ -969,11 +969,11 @@ function AdminAccess(p) {
           ${pinList.map(function(px){
             return html`<div key=${px.pin} style=${{
               display:"flex",alignItems:"center",gap:10,padding:"10px 14px",
-              borderRadius:10,background:px.used?"rgba(74,222,128,.05)":thm.inv(.04),
-              border:"1px solid "+(px.used?"rgba(74,222,128,.2)":thm.inv(.08))
+              borderRadius:10,background:px.used?thm.id==="estadio"?"rgba(22,101,52,.08)":"rgba(74,222,128,.05)":thm.inv(.04),
+              border:"1px solid "+(px.used?thm.id==="estadio"?"rgba(22,101,52,.25)":"rgba(74,222,128,.2)":thm.inv(.08))
             }}>
               <span style=${{fontFamily:"monospace",fontWeight:700,fontSize:14,letterSpacing:2,
-                color:px.used?"#4ade80":thm.accent,minWidth:70}}>${px.pin}</span>
+                color:px.used?thm.id==="estadio"?"#166534":"#4ade80":thm.accent,minWidth:70}}>${px.pin}</span>
               <div style=${{flex:1,fontSize:12,color:thm.inv(.5)}}>
                 ${px.used
                   ? html`\u2705 Used by <strong style=${{color:thm.inv(.75)}}>${px.usedBy||px.name||"?"}</strong> ${px.usedEmail?" ("+px.usedEmail+")":""}`
@@ -1084,10 +1084,10 @@ function AdminData(p) {
 
     <div style=${{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
 
-      <div style=${{background:"rgba(74,222,128,.07)",border:"1px solid rgba(74,222,128,.2)",borderRadius:12,padding:"14px 16px"}}>
-        <div style=${{fontWeight:700,fontSize:13,color:"#4ade80",marginBottom:6}}>Exportar copia de seguridad</div>
+      <div style=${{background:thm.id==="estadio"?"rgba(22,101,52,.1)":"rgba(74,222,128,.07)",border:"1px solid rgba(74,222,128,.2)",borderRadius:12,padding:"14px 16px"}}>
+        <div style=${{fontWeight:700,fontSize:13,color:thm.id==="estadio"?"#166534":"#4ade80",marginBottom:6}}>Exportar copia de seguridad</div>
         <div style=${{fontSize:12,color:thm.inv(.4),marginBottom:10}}>
-          Downloads all participants, results and settings as a JSON file.
+          Descarga todos los participantes, resultados y ajustes en un archivo JSON.
           Hazlo antes de cualquier cambio importante.
         </div>
         <${Btn} onClick=${exportData} sx=${{padding:"9px 20px"}}>Descargar copia de seguridad</${Btn}>
@@ -1096,35 +1096,35 @@ function AdminData(p) {
       <div style=${{background:"rgba(59,130,246,.07)",border:"1px solid rgba(59,130,246,.2)",borderRadius:12,padding:"14px 16px"}}>
         <div style=${{fontWeight:700,fontSize:13,color:"#93c5fd",marginBottom:6}}>Importar copia de seguridad</div>
         <div style=${{fontSize:12,color:thm.inv(.4),marginBottom:10}}>
-          <strong style=${{color:"#4ade80"}}>Merge</strong> — agrega nuevos participantes del archivo, conserva los existentes (seguro).<br/>
-          <strong style=${{color:"#f87171"}}>Replace</strong> — sobreescribe todo con el contenido del archivo (destructivo).
+          <strong style=${{color:thm.id==="estadio"?"#166534":"#4ade80"}}>Merge</strong> — agrega nuevos participantes del archivo, conserva los existentes (seguro).<br/>
+          <strong style=${{color:thm.id==="estadio"?"#991b1b":"#f87171"}}>Replace</strong> — sobreescribe todo con el contenido del archivo (destructivo).
         </div>
         <div style=${{display:"flex",gap:8,flexWrap:"wrap"}}>
           <label style=${{display:"inline-flex",alignItems:"center",gap:6,cursor:"pointer",
             padding:"9px 16px",borderRadius:10,background:"rgba(74,222,128,.12)",
-            border:"1px solid rgba(74,222,128,.3)",fontSize:13,fontWeight:600,color:"#4ade80",
+            border:"1px solid rgba(74,222,128,.3)",fontSize:13,fontWeight:600,color:thm.id==="estadio"?"#166534":"#4ade80",
             fontFamily:"'DM Sans',sans-serif"}}>
             \u2795 Merge
             <input type="file" accept=".json" style=${{display:"none"}}
               onChange=${function(e){ if(e.target.files[0]) importData(e.target.files[0],"merge"); e.target.value=""; }}/>
           </label>
           <label style=${{display:"inline-flex",alignItems:"center",gap:6,cursor:"pointer",
-            padding:"9px 16px",borderRadius:10,background:"rgba(248,113,113,.1)",
-            border:"1px solid rgba(248,113,113,.3)",fontSize:13,fontWeight:600,color:"#f87171",
+            padding:"9px 16px",borderRadius:10,background:thm.id==="estadio"?"rgba(153,27,27,.15)":"rgba(248,113,113,.1)",
+            border:"1px solid rgba(248,113,113,.3)",fontSize:13,fontWeight:600,color:thm.id==="estadio"?"#991b1b":"#f87171",
             fontFamily:"'DM Sans',sans-serif"}}>
             \u26a0\ufe0f Replace all
             <input type="file" accept=".json" style=${{display:"none"}}
               onChange=${function(e){ if(e.target.files[0]&&confirm("¿Esto sobreescribirá TODOS los datos actuales. ¿Estás seguro?")) importData(e.target.files[0],"replace"); e.target.value=""; }}/>
           </label>
         </div>
-        ${importErr&&html`<div style=${{marginTop:8,fontSize:12,color:"#f87171"}}>${importErr}</div>`}
+        ${importErr&&html`<div style=${{marginTop:8,fontSize:12,color:thm.id==="estadio"?"#991b1b":"#f87171"}}>${importErr}</div>`}
       </div>
 
       <div style=${{background:thm.a(.07),border:thm.bdra(1,.2),borderRadius:12,padding:"14px 16px"}}>
         <div style=${{fontWeight:700,fontSize:13,color:thm.accent,marginBottom:6}}>Sincronización Firebase</div>
         <div style=${{fontSize:12,color:thm.inv(.4),marginBottom:10}}>
           Sube todos los datos locales a Firebase. Úsalo después de migrar desde localStorage o tras una importación.
-          Configure the Firebase URL in Settings first.
+          Configura la URL de Firebase en Ajustes primero.
         </div>
         <${Btn} onClick=${pushToFirebase} v=${db._url?"primary":"secondary"} sx=${{padding:"9px 20px"}}>
           ${db._url?"Subir todos los datos a Firebase":"Firebase no configurado"}
@@ -1133,8 +1133,8 @@ function AdminData(p) {
 
     </div>
 
-    ${msg&&html`<div style=${{padding:"10px 14px",borderRadius:10,background:"rgba(74,222,128,.1)",
-      border:"1px solid rgba(74,222,128,.3)",fontSize:13,color:"#4ade80"}}>${msg}</div>`}
+    ${msg&&html`<div style=${{padding:"10px 14px",borderRadius:10,background:thm.id==="estadio"?"rgba(22,101,52,.15)":"rgba(74,222,128,.1)",
+      border:"1px solid rgba(74,222,128,.3)",fontSize:13,color:thm.id==="estadio"?"#166534":"#4ade80"}}>${msg}</div>`}
   </div>`;
 }
 
@@ -1182,17 +1182,15 @@ function AdminSettings(p) {
         style=${{ fontFamily:"monospace", fontSize:12 }}/>
     </${Field}>
     <div style=${{fontSize:11,color:thm.inv(.3),marginBottom:16,lineHeight:1.7}}>
-      Optional. Create a free Firebase Realtime Database at console.firebase.google.com,
-      set rules to public read/write, paste the URL above and save. All data will
-      then sync across all users automatically. Leave blank to use local storage only.
+      Opcional. Crea una base de datos gratuita en console.firebase.google.com, configura las reglas como lectura/escritura pública, pega la URL arriba y guarda. Todos los datos se sincronizarán automáticamente entre usuarios. Déjalo vacío para usar solo almacenamiento local.
     </div>
-    <${Field} label="Registration deadline">
+    <${Field} label="Fecha límite de registro">
       <input type="datetime-local" value=${loc.deadline||""}
         onInput=${function(e){ setLoc(function(prev){ return Object.assign({},prev,{deadline:e.target.value}); }); }}
         style=${{ fontFamily:"monospace", fontSize:13 }}/>
     </${Field}>
     <div style=${{fontSize:11,color:thm.inv(.3),marginBottom:16,lineHeight:1.7}}>
-      After this date/time, the Predict button on the home page is hidden and new predictions are blocked.
+      Después de esta fecha, el botón de predicciones se oculta y no se aceptan nuevas.
     </div>
     <${Field} label=${t.adminEmailSettings}>
       <input type="email" value=${loc.adminEmail||""}
@@ -1217,6 +1215,6 @@ function AdminSettings(p) {
     </div>
 
     <${Btn} onClick=${save} sx=${{ padding:"12px 28px" }}>${t.saveBtn}</${Btn}>
-    ${msg && html`<p style=${{ marginTop:12, fontSize:13, color:"#4ade80" }}>${msg}</p>`}
+    ${msg && html`<p style=${{ marginTop:12, fontSize:13, color:thm.id==="estadio"?"#166534":"#4ade80" }}>${msg}</p>`}
   </div>`;
 }

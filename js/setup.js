@@ -167,7 +167,7 @@ var THEMES = {
     bodyBg:    '#e8f4e8',
     bodyGrad:  'radial-gradient(at 0% 0%, rgba(46,125,50,0.25) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(27,94,32,0.2) 0, transparent 50%), radial-gradient(at 50% 100%, rgba(129,199,132,0.25) 0, transparent 40%)',
     a:    function(x){ return 'rgba(27,94,32,'+x+')'; },
-    inv:  function(x){ return 'rgba(10,40,12,'+x+')'; },
+    inv:  function(x){ var a=x<0.1?x:Math.min(1,0.58+x*0.45); return 'rgba(5,15,8,'+a.toFixed(2)+')'; },
     bdr:  function(w,x){ return w+'px solid rgba(0,80,20,'+(Math.round(x*1.8*10)/10)+')'; },
     bdra: function(w,x){ return w+'px solid rgba(27,94,32,'+x+')'; }
   }

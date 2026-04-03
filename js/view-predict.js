@@ -164,7 +164,7 @@ function PredictView(p) {
           ? "\ud83d\udcb0 Debes haber transferido la cuota de inscripci\u00f3n antes de recibir tu PIN. Contacta al organizador."
           : "\ud83d\udcb0 You must have paid the entry fee before receiving your PIN. Contact the organiser."}
       </div>`}
-      ${err&&html`<p style=${{color:"#f87171",fontSize:13,marginBottom:12}}>${err}</p>`}
+      ${err&&html`<p style=${{color:thm.id==="estadio"?"#991b1b":"#f87171",fontSize:13,marginBottom:12}}>${err}</p>`}
       <${Btn} onClick=${handleStart} full=${true} disabled=${pinLoading}
         sx=${{padding:"13px",fontSize:15}}>${pinLoading?(lang==="es"?"Verificando...":"Verifying..."):t.cont}</${Btn}>
     </${Card}>
@@ -177,8 +177,8 @@ function PredictView(p) {
     <p style=${{color:thm.inv(.5),margin:"14px 0 20px",lineHeight:1.8}}>
       ${t.savedMsg}${existId?" "+t.updated:""}<br/>${t.goodluck}
     </p>
-    ${adminNotif==="sent"&&html`<div style=${{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(74,222,128,.1)",border:"1px solid rgba(74,222,128,.3)",borderRadius:10,padding:"7px 14px",fontSize:12,color:"#4ade80",marginBottom:16}}>${t.adminNotifSent}</div>`}
-    ${adminNotif==="fail"&&html`<div style=${{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(248,113,113,.1)",border:"1px solid rgba(248,113,113,.3)",borderRadius:10,padding:"7px 14px",fontSize:12,color:"#f87171",marginBottom:16}}>${t.adminNotifFail}</div>`}
+    ${adminNotif==="sent"&&html`<div style=${{display:"inline-flex",alignItems:"center",gap:6,background:thm.id==="estadio"?"rgba(22,101,52,.15)":"rgba(74,222,128,.1)",border:"1px solid rgba(74,222,128,.3)",borderRadius:10,padding:"7px 14px",fontSize:12,color:thm.id==="estadio"?"#166534":"#4ade80",marginBottom:16}}>${t.adminNotifSent}</div>`}
+    ${adminNotif==="fail"&&html`<div style=${{display:"inline-flex",alignItems:"center",gap:6,background:thm.id==="estadio"?"rgba(153,27,27,.15)":"rgba(248,113,113,.1)",border:"1px solid rgba(248,113,113,.3)",borderRadius:10,padding:"7px 14px",fontSize:12,color:thm.id==="estadio"?"#991b1b":"#f87171",marginBottom:16}}>${t.adminNotifFail}</div>`}
 
     <div style=${{background:thm.inv(.04),border:thm.bdr(1,.08),borderRadius:14,padding:"16px",marginBottom:20}}>
       <div style=${{fontSize:12,fontWeight:700,color:thm.inv(.4),marginBottom:12,letterSpacing:".06em"}}>
@@ -268,9 +268,9 @@ function PredictView(p) {
 
     ${section==="knockout"&&html`<${Card}>
       <div style=${{marginBottom:12,padding:"10px 14px",borderRadius:10,
-        background:r32info.complete?"rgba(74,222,128,.07)":thm.a(.07),
-        border:"1px solid "+(r32info.complete?"rgba(74,222,128,.2)":thm.a(.2))}}>
-        <div style=${{fontSize:11,fontWeight:700,color:r32info.complete?"#4ade80":thm.a(.8)}}>
+        background:r32info.complete?thm.id==="estadio"?"rgba(22,101,52,.1)":"rgba(74,222,128,.07)":thm.a(.07),
+        border:"1px solid "+(r32info.complete?thm.id==="estadio"?"rgba(22,101,52,.25)":"rgba(74,222,128,.2)":thm.a(.2))}}>
+        <div style=${{fontSize:11,fontWeight:700,color:r32info.complete?thm.id==="estadio"?"#166534":"#4ade80":thm.a(.8)}}>
           ${r32info.complete?"- "+t.r32ok:"- "+t.r32Incomplete+" ("+r32info.groupsDone+"/12)"}
         </div>
         ${!r32info.complete&&html`<div style=${{fontSize:11,color:thm.inv(.4),marginTop:4}}>
@@ -287,9 +287,9 @@ function PredictView(p) {
           var done=filled===total&&total>0;
           return html`<button key=${rd.id} onClick=${function(){setActiveKO(rd.id);}} style=${{
             padding:"5px 10px",borderRadius:8,fontSize:11,fontWeight:700,cursor:"pointer",
-            border:"1.5px solid "+(activeKO===rd.id?thm.accent:done?"rgba(74,222,128,.4)":thm.inv(.1)),
-            background:activeKO===rd.id?thm.accent:done?"rgba(74,222,128,.08)":"transparent",
-            color:activeKO===rd.id?"#000":done?"#4ade80":thm.inv(.5),
+            border:"1.5px solid "+(activeKO===rd.id?thm.accent:done?thm.id==="estadio"?"rgba(22,101,52,.5)":"rgba(74,222,128,.4)":thm.inv(.1)),
+            background:activeKO===rd.id?thm.accent:done?thm.id==="estadio"?"rgba(22,101,52,.1)":"rgba(74,222,128,.08)":"transparent",
+            color:activeKO===rd.id?"#000":done?thm.id==="estadio"?"#166534":"#4ade80":thm.inv(.5),
             fontFamily:"'DM Sans',sans-serif"
           }}>${done&&activeKO!==rd.id?"- ":""}${rd.label} (${filled}/${total})</button>`;
         })}

@@ -82,7 +82,7 @@ function MRow(p) {
       <span style=${{ fontSize:12, fontWeight:500, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>${teamName(p.match.away,lang)}</span>
     </div>
     ${pts !== null && html`<span style=${{ fontSize:11, fontWeight:700, flexShrink:0, minWidth:28, textAlign:"right",
-      color: pts>=6?"#4ade80":pts>=3?thm.accent:pts>0?"#60a5fa":thm.inv(.2) }}>
+      color: pts>=6?(thm.id==="estadio"?"#166534":"#4ade80"):pts>=3?thm.accent:pts>0?"#60a5fa":thm.inv(.2) }}>
       ${pts > 0 ? "+" + pts : (pts === 0 && hv !== "" ? "0" : "")}
     </span>`}
   </div>`;
@@ -110,7 +110,7 @@ function StandingsTable(p) {
   return html`<div style=${{ marginTop:12, padding:"10px 12px", background:thm.inv(.03), borderRadius:12, border:thm.bdr(1,.07) }}>
     <div style=${{ display:"flex", justifyContent:"space-between", marginBottom:7 }}>
       <span style=${{ fontSize:10, fontWeight:700, color:thm.inv(.3), letterSpacing:".08em" }}>${t.standingsLabel} ${p.group}</span>
-      <span style=${{ fontSize:10, color: done ? "rgba(74,222,128,.7)" : thm.a(.6) }}>${done ? "\u2713 " + t.qualifyDirect : "* projected"}</span>
+      <span style=${{ fontSize:10, color: done ? (thm.id==="estadio"?"rgba(22,101,52,.9)":"rgba(74,222,128,.7)") : thm.a(.6) }}>${done ? "\u2713 " + t.qualifyDirect : "* projected"}</span>
     </div>
     <div style=${{ display:"grid", gridTemplateColumns:"14px 1fr 22px 22px 22px 22px 42px 26px 28px", gap:2, fontSize:10, color:thm.inv(.25), marginBottom:4, padding:"0 2px" }}>
       <span/><span/>
@@ -133,19 +133,19 @@ function StandingsTable(p) {
       var thirdOut = isThird && thirdQualifies === false;
       var thirdMaybe = isThird && thirdQualifies === null;
 
-      var bg  = isTop2    ? "rgba(74,222,128,.07)"  :
-                thirdIn   ? "rgba(74,222,128,.07)"  :
+      var bg  = isTop2    ? thm.id==="estadio"?"rgba(22,101,52,.08)":"rgba(74,222,128,.07)"  :
+                thirdIn   ? thm.id==="estadio"?"rgba(22,101,52,.08)":"rgba(74,222,128,.07)"  :
                 thirdMaybe? thm.a(.05)  :
                 thirdOut  ? "rgba(255,100,100,.04)" : "transparent";
-      var bd  = isTop2    ? "1px solid rgba(74,222,128,.1)"   :
-                thirdIn   ? "1px solid rgba(74,222,128,.1)"   :
+      var bd  = isTop2    ? thm.id==="estadio"?"1px solid rgba(22,101,52,.2)":"1px solid rgba(74,222,128,.1)"   :
+                thirdIn   ? thm.id==="estadio"?"1px solid rgba(22,101,52,.2)":"1px solid rgba(74,222,128,.1)"   :
                 thirdMaybe? thm.bdra(1,.08)  :
                 thirdOut  ? "1px solid rgba(255,100,100,.1)"  : "1px solid transparent";
       var nameCol = isTop2||thirdIn ? thm.inv(.85) :
                    thirdMaybe       ? thm.inv(.55) : thm.inv(.3);
-      var ptsCol  = isTop2||thirdIn ? "#4ade80"    :
+      var ptsCol  = isTop2||thirdIn ? (thm.id==="estadio"?"#166534":"#4ade80")    :
                    thirdMaybe       ? thm.accent    :
-                   thirdOut         ? "#f87171"    : thm.inv(.3);
+                   thirdOut         ? (thm.id==="estadio"?"#991b1b":"#f87171") : thm.inv(.3);
 
       return html`<div key=${r.team} style=${{
         display:"grid", gridTemplateColumns:"14px 1fr 22px 22px 22px 22px 42px 26px 28px",
@@ -158,7 +158,7 @@ function StandingsTable(p) {
           return html`<span key=${k} style=${{ textAlign:"center", color:thm.inv(.35), fontSize:11 }}>${v}</span>`;
         })}
         <span style=${{ textAlign:"center", color:thm.inv(.35), fontSize:11 }}>${r.gf}:${r.ga}</span>
-        <span style=${{ textAlign:"center", fontSize:11, color: r.gd>0?"#4ade80":r.gd<0?"#f87171":thm.inv(.35) }}>${r.gd > 0 ? "+" : ""}${r.gd}</span>
+        <span style=${{ textAlign:"center", fontSize:11, color: r.gd>0?(thm.id==="estadio"?"#166534":"#4ade80"):r.gd<0?(thm.id==="estadio"?"#991b1b":"#f87171"):thm.inv(.35) }}>${r.gd > 0 ? "+" : ""}${r.gd}</span>
         <span style=${{ textAlign:"center", fontWeight:700, fontSize:12, color:ptsCol }}>${r.pts}</span>
       </div>`;
     })}
@@ -178,9 +178,9 @@ function GroupTabs(p) {
       var done = groupDone(p.isResult ? (p.preds && p.preds.groups || {}) : (p.preds || {}), g);
       return html`<button key=${g} onClick=${function(){ p.onChange(g); }} style=${{
         padding:"4px 9px", borderRadius:7, fontSize:12, fontWeight:700, cursor:"pointer",
-        border: "1.5px solid " + (p.active===g ? thm.accent : done ? "rgba(74,222,128,.3)" : thm.inv(.1)),
-        background: p.active===g ? thm.accent : done ? "rgba(74,222,128,.08)" : "transparent",
-        color: p.active===g ? thm.onAccent : done ? "#4ade80" : thm.inv(.5),
+        border: "1.5px solid " + (p.active===g ? thm.accent : done ? (thm.id==="estadio"?"rgba(22,101,52,.4)":"rgba(74,222,128,.3)") : thm.inv(.1)),
+        background: p.active===g ? thm.accent : done ? (thm.id==="estadio"?"rgba(22,101,52,.1)":"rgba(74,222,128,.08)") : "transparent",
+        color: p.active===g ? thm.onAccent : done ? (thm.id==="estadio"?"#166534":"#4ade80") : thm.inv(.5),
         fontFamily:"'DM Sans',sans-serif"
       }}>${g}${done && p.active !== g ? " \u2713" : ""}</button>`;
     })}
@@ -284,8 +284,8 @@ function KOMatchRow(p) {
     status=(predictedWinner===actualWinner)?'correct':'wrong';
   }
 
-  var borderCol = status==='correct'?'rgba(74,222,128,.4)':status==='wrong'?'rgba(248,113,113,.3)':thm.inv(.1);
-  var bgCol     = status==='correct'?'rgba(74,222,128,.06)':status==='wrong'?'rgba(248,113,113,.04)':thm.inv(.04);
+  var borderCol = status==='correct'?thm.id==="estadio"?'rgba(22,101,52,.5)':'rgba(74,222,128,.4)':status==='wrong'?'rgba(248,113,113,.3)':thm.inv(.1);
+  var bgCol     = status==='correct'?thm.id==="estadio"?'rgba(22,101,52,.08)':'rgba(74,222,128,.06)':status==='wrong'?'rgba(248,113,113,.04)':thm.inv(.04);
 
   function setH(v){ onChange(Object.assign({},sc,{h:v.replace(/\D/g,'').slice(0,2)})); }
   function setA(v){ onChange(Object.assign({},sc,{a:v.replace(/\D/g,'').slice(0,2)})); }
@@ -327,15 +327,15 @@ function KOMatchRow(p) {
     ${isDraw&&homeTeam&&awayTeam&&html`<div style=${{display:'flex',gap:3,flexShrink:0}}>
       <button onClick=${function(){setW('home');}} style=${{
         padding:'2px 7px',borderRadius:5,fontSize:9,fontWeight:700,cursor:'pointer',
-        border:'1px solid '+(sc.winner==='home'?'rgba(74,222,128,.6)':thm.inv(.15)),
-        background:sc.winner==='home'?'rgba(74,222,128,.15)':'transparent',
+        border:'1px solid '+(sc.winner==='home'?thm.id==="estadio"?'rgba(22,101,52,.8)':'rgba(74,222,128,.6)':thm.inv(.15)),
+        background:sc.winner==='home'?thm.id==="estadio"?'rgba(22,101,52,.15)':'rgba(74,222,128,.15)':'transparent',
         color:sc.winner==='home'?'#4ade80':thm.inv(.4),
         fontFamily:"'DM Sans',sans-serif"
       }}>H</button>
       <button onClick=${function(){setW('away');}} style=${{
         padding:'2px 7px',borderRadius:5,fontSize:9,fontWeight:700,cursor:'pointer',
-        border:'1px solid '+(sc.winner==='away'?'rgba(74,222,128,.6)':thm.inv(.15)),
-        background:sc.winner==='away'?'rgba(74,222,128,.15)':'transparent',
+        border:'1px solid '+(sc.winner==='away'?thm.id==="estadio"?'rgba(22,101,52,.8)':'rgba(74,222,128,.6)':thm.inv(.15)),
+        background:sc.winner==='away'?thm.id==="estadio"?'rgba(22,101,52,.15)':'rgba(74,222,128,.15)':'transparent',
         color:sc.winner==='away'?'#4ade80':thm.inv(.4),
         fontFamily:"'DM Sans',sans-serif"
       }}>A</button>

@@ -87,7 +87,7 @@ function HomeView(p) {
           </h3>
           <div style=${{marginBottom:14,textAlign:"left"}}>
             <div style=${{fontSize:11,fontWeight:700,color:thm.inv(.4),marginBottom:8,textTransform:"uppercase",letterSpacing:".06em"}}>${t.perMatch}</div>
-            ${[[t.result,"3pts","#4ade80"],[t.goalsA,"1pt","#60a5fa"],[t.goalsB,"1pt","#60a5fa"],[t.gdiff,"2pts",thm.accent]].map(function(si){
+            ${[[t.result,"3pts",thm.id==="estadio"?"#166534":"#4ade80"],[t.goalsA,"1pt","#60a5fa"],[t.goalsB,"1pt","#60a5fa"],[t.gdiff,"2pts",thm.accent]].map(function(si){
               return html`<div key=${si[0]} style=${{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"7px 10px",borderRadius:8,marginBottom:4,background:thm.inv(.05)}}>
                 <span style=${{fontSize:13,color:thm.inv(.75)}}>${si[0]}</span>
                 <span style=${{fontWeight:800,color:si[2],fontSize:14}}>${si[1]}</span>
@@ -190,7 +190,7 @@ function HomeView(p) {
     ${isPastDeadline&&html`<div style=${{
       padding:"10px 16px",borderRadius:10,marginBottom:14,
       background:"rgba(248,113,113,.08)",border:"1px solid rgba(248,113,113,.25)",
-      fontSize:13,color:"#f87171",textAlign:"center"
+      fontSize:13,color:thm.id==="estadio"?"#991b1b":"#f87171",textAlign:"center"
     }}>
       \ud83d\udd12 ${lang==="es"?"Las predicciones cerraron el":"Predictions closed on"} ${deadlineStr}
     </div>`}
@@ -207,7 +207,7 @@ function HomeView(p) {
       background:"linear-gradient(135deg,"+thm.a(.1)+","+thm.a(.04)+")",
       borderRadius:22, border:thm.bdra(1.5,.18), marginBottom:20 }}>
       <div style=${{ fontSize:52, marginBottom:10 }}>\u26bd\ufe0e</div>
-      <h1 className="bb" style=${{ fontSize:42, lineHeight:1,
+      <h1 key=${thm.id} className="bb" style=${{ fontSize:42, lineHeight:1,
         background:thm.accentGrad,
         WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>${t.title}</h1>
       <p style=${{ color:thm.inv(.42), fontSize:13, marginTop:10, lineHeight:1.7 }}>${t.sub}</p>
