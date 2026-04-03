@@ -143,7 +143,7 @@ var KO_ROUNDS = [
 var DEF = {
   adminPw:    "PuraFoda888!",
   entryFee:   40,
-  currency:   "AUD",
+  currency:   "COP",
   adminEmail: "",
   firebase:   "https://polla-col-2026-default-rtdb.firebaseio.com",
   deadline:   "2026-06-10T23:59",

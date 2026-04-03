@@ -31,7 +31,7 @@ function PredictView(p) {
     <h2 class="bb" style=${{fontSize:32,marginBottom:12}}>${lang==="es"?"PREDICCIONES CERRADAS":"PREDICTIONS CLOSED"}</h2>
     <p style=${{color:"rgba(255,255,255,.4)",fontSize:14,lineHeight:1.8}}>
       ${lang==="es"?"El plazo de registro cerr\u00f3 el":"The registration deadline was"}
-      ${deadline.toLocaleDateString(lang==="es"?"es-AU":"en-AU",{day:"numeric",month:"long",year:"numeric"})}.<br/>
+      ${deadline.toLocaleDateString(lang==="es"?"es-CO":"en-CO",{day:"numeric",month:"long",year:"numeric"})}.<br/>
       ${lang==="es"?"Ya no es posible registrar o modificar predicciones.":"No new predictions can be registered or modified."}
     </p>
     <div style=${{marginTop:24,display:"flex",gap:10,justifyContent:"center"}}>

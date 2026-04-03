@@ -228,7 +228,7 @@ var T = {
     scoringTitle: "Sistema de Puntaje",
     participantPicks: "Predicciones Equipo Campeon de los Participantes",
     downloadPDF:"Descargar mis predicciones (PDF)",
-    pdfTitle:   "La Tribuna 2026 \u2014 Predicciones",
+    pdfTitle:   "Polla Mundialista 2026 \u2014 Predicciones",
     playoffsTab: "Playoffs",
     adminNotifSent: "Admin notificado \u2713",
     adminNotifFail: "Email admin fall\u00f3 (revisa la configuraci\u00f3n)"

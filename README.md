@@ -1,8 +1,8 @@
-# ⚽ Quiniela Mundial 2026
+# ⚽ Polla Mundialista 2026
 
 A full-featured FIFA World Cup 2026 sweepstake web app for a group of friends. Built with vanilla React (no build step), hosted on GitHub Pages, with Firebase Realtime Database as the backend.
 
-**Live site:** https://julimendeza.github.io/sweeps2026/
+**Live site:** _(GitHub Pages URL pending setup)_
 
 ---
 
@@ -73,7 +73,7 @@ No npm, no webpack, no build process — just static files.
 ## Project Structure
 
 ```
-sweeps2026/
+polla-col-2026/
 ├── index.html              # HTML shell + script load order
 ├── css/
 │   └── styles.css          # All styles including responsive rules
@@ -99,20 +99,20 @@ sweeps2026/
 ### 1. Fork / clone the repo
 
 ```bash
-git clone https://github.com/julimendeza/sweeps2026.git
+git clone https://github.com/julimendeza/polla-col-2026.git
 ```
 
 ### 2. Firebase setup
 
 1. Go to [console.firebase.google.com](https://console.firebase.google.com)
-2. Create a new project
+2. Create a new project (already created: `polla-col-2026`)
 3. Build → Realtime Database → Create database → **Start in test mode**
-4. Copy the database URL (e.g. `https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app`)
-5. Paste it into `js/data.js` under `DEF.firebase`
+4. Copy the database URL (e.g. `https://polla-col-2026-default-rtdb.firebaseio.com`)
+5. Verify it is set in `js/data.js` under `DEF.firebase`
 
 ### 3. Deploy to GitHub Pages
 
-Push to the `main` branch. GitHub Pages serves the repo root automatically.
+Push to the `main` branch. In the repo Settings → Pages, set source to `main` branch / root.
 
 ### 4. First-time admin setup
 

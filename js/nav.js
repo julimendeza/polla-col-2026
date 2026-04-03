@@ -23,7 +23,7 @@ function Nav(p) {
       <button onClick=${function(){ setView("home"); }} className="bb" style=${{
         background:"none", border:"none", color:"#f59e0b",
         fontSize:16, cursor:"pointer", whiteSpace:"nowrap", flexShrink:0
-      }}>\u26bd <span class="nav-label">${lang==="es"?"La Tribuna 2026":"WC 2026"}</span></button>
+      }}>⚽ <span class="nav-label">${lang==="es"?"Polla Mundialista 2026":"WC 2026"}</span></button>
 
       <div style=${{ display:"flex", gap:2, alignItems:"center", flexShrink:0 }}>
         ${navItems.map(function(x) {
