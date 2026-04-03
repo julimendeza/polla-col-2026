@@ -208,7 +208,7 @@ function HomeView(p) {
       borderRadius:22, border:thm.bdra(1.5,.18), marginBottom:20 }}>
       <div style=${{ fontSize:52, marginBottom:10 }}>\u26bd\ufe0e</div>
       <h1 className="bb" style=${{ fontSize:42, lineHeight:1,
-        background:"linear-gradient(135deg,#fbbf24,#f59e0b)",
+        background:thm.accentGrad,
         WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>${t.title}</h1>
       <p style=${{ color:thm.inv(.42), fontSize:13, marginTop:10, lineHeight:1.7 }}>${t.sub}</p>
       <div style=${{ marginTop:20, display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>

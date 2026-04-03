@@ -155,20 +155,20 @@ var THEMES = {
   },
   estadio: {
     id: 'estadio', label: '🏟 Estadio',
-    accent:    '#2e7d32',
-    accentD:   '#1b5e20',
-    accentGrad:'linear-gradient(135deg,#2e7d32,#1b5e20)',
+    accent:    '#1b5e20',
+    accentD:   '#0a3d12',
+    accentGrad:'linear-gradient(135deg,#1b5e20,#0a3d12)',
     onAccent:  '#fff',
-    deep:      '#c8e6c9',
-    row1:      '#dcedc8',
+    deep:      '#b8ddb8',
+    row1:      '#d4edd4',
     tourBg:    '#fff',
-    loadBg:    '#c8e6c9',
-    loadColor: 'rgba(46,125,50,.7)',
-    bodyBg:    '#f0f7ee',
-    bodyGrad:  'radial-gradient(at 0% 0%, rgba(46,125,50,0.2) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(27,94,32,0.15) 0, transparent 50%), radial-gradient(at 50% 100%, rgba(129,199,132,0.2) 0, transparent 40%)',
-    a:    function(x){ return 'rgba(46,125,50,'+x+')'; },
-    inv:  function(x){ return 'rgba(0,60,10,'+x+')'; },
+    loadBg:    '#b8ddb8',
+    loadColor: 'rgba(27,94,32,.8)',
+    bodyBg:    '#e8f4e8',
+    bodyGrad:  'radial-gradient(at 0% 0%, rgba(46,125,50,0.25) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(27,94,32,0.2) 0, transparent 50%), radial-gradient(at 50% 100%, rgba(129,199,132,0.25) 0, transparent 40%)',
+    a:    function(x){ return 'rgba(27,94,32,'+x+')'; },
+    inv:  function(x){ return 'rgba(10,40,12,'+x+')'; },
     bdr:  function(w,x){ return w+'px solid rgba(0,80,20,'+(Math.round(x*1.8*10)/10)+')'; },
-    bdra: function(w,x){ return w+'px solid rgba(46,125,50,'+x+')'; }
+    bdra: function(w,x){ return w+'px solid rgba(27,94,32,'+x+')'; }
   }
 };

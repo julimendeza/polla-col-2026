@@ -1182,7 +1182,9 @@ function AdminSettings(p) {
         style=${{ fontFamily:"monospace", fontSize:12 }}/>
     </${Field}>
     <div style=${{fontSize:11,color:thm.inv(.3),marginBottom:16,lineHeight:1.7}}>
-      Opcional. No Borrar.
+      Optional. Create a free Firebase Realtime Database at console.firebase.google.com,
+      set rules to public read/write, paste the URL above and save. All data will
+      then sync across all users automatically. Leave blank to use local storage only.
     </div>
     <${Field} label="Registration deadline">
       <input type="datetime-local" value=${loc.deadline||""}
@@ -1190,7 +1192,7 @@ function AdminSettings(p) {
         style=${{ fontFamily:"monospace", fontSize:13 }}/>
     </${Field}>
     <div style=${{fontSize:11,color:thm.inv(.3),marginBottom:16,lineHeight:1.7}}>
-      Despues de esta fecha el boton de predecir se oculta y las nuevas predicciones se bloquean.
+      After this date/time, the Predict button on the home page is hidden and new predictions are blocked.
     </div>
     <${Field} label=${t.adminEmailSettings}>
       <input type="email" value=${loc.adminEmail||""}

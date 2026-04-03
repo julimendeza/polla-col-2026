@@ -32,6 +32,7 @@ function Card(p) {
 }
 
 function Field(p) {
+  var thm = useLang().thm || THEMES.dark;
   return html`<div style=${{ marginBottom:16 }}>
     <label style=${{ fontSize:13, color:thm.inv(.6), display:"block", marginBottom:6 }}>${p.label}</label>
     ${p.children}
@@ -39,8 +40,9 @@ function Field(p) {
 }
 
 function PBar(p) {
+  var thm = useLang().thm || THEMES.dark;
   return html`<div style=${{ background:thm.inv(.08), borderRadius:99, height:5, overflow:"hidden" }}>
-    <div style=${{ height:5, borderRadius:99, background:"linear-gradient(90deg,#f59e0b,#d97706)", transition:"width .3s", width: Math.min(100, (p.v/p.max)*100) + "%" }}/>
+    <div style=${{ height:5, borderRadius:99, background:thm.accentGrad, transition:"width .3s", width: Math.min(100, (p.v/p.max)*100) + "%" }}/>
   </div>`;
 }
 
@@ -170,6 +172,7 @@ function StandingsTable(p) {
 
 // - Group tab row -
 function GroupTabs(p) {
+  var thm = useLang().thm || THEMES.dark;
   return html`<div style=${{ display:"flex", gap:4, flexWrap:"wrap", marginBottom:12 }}>
     ${GROUPS.map(function(g) {
       var done = groupDone(p.isResult ? (p.preds && p.preds.groups || {}) : (p.preds || {}), g);
@@ -177,7 +180,7 @@ function GroupTabs(p) {
         padding:"4px 9px", borderRadius:7, fontSize:12, fontWeight:700, cursor:"pointer",
         border: "1.5px solid " + (p.active===g ? thm.accent : done ? "rgba(74,222,128,.3)" : thm.inv(.1)),
         background: p.active===g ? thm.accent : done ? "rgba(74,222,128,.08)" : "transparent",
-        color: p.active===g ? "#000" : done ? "#4ade80" : thm.inv(.5),
+        color: p.active===g ? thm.onAccent : done ? "#4ade80" : thm.inv(.5),
         fontFamily:"'DM Sans',sans-serif"
       }}>${g}${done && p.active !== g ? " \u2713" : ""}</button>`;
     })}
@@ -379,6 +382,7 @@ function BCol(p) {
 
 // - Bracket connector SVG -
 function BConn(p) {
+  var thm = useLang().thm || THEMES.dark;
   var outer=p.outer,inner=p.inner,dir=p.dir,H=p.H,CW=p.CW;
   var stk=thm.inv(.15);
   function ctrO(i){return(i+0.5)*H/outer.length;}
@@ -400,6 +404,7 @@ function BConn(p) {
 }
 
 function BFinalConn(p) {
+  var thm = useLang().thm || THEMES.dark;
   var H=p.H,CW=p.CW,dir=p.dir,stk=thm.inv(.15);
   var c1=H/4,c2=3*H/4,mid=H/2;
   return html`<svg style=${{width:CW+'px',height:H+'px',flexShrink:0,display:'block'}} viewBox=${'0 0 '+CW+' '+H}>
@@ -610,6 +615,7 @@ function BracketView(p) {
 
 // - Bracket scores table below the bracket -
 function BracketScoreTable(p) {
+  var thm = useLang().thm || THEMES.dark;
   var C=p.C, ko=p.ko, lang=p.lang, t=p.t;
   if(!ko||Object.keys(ko).length===0) return null;
 

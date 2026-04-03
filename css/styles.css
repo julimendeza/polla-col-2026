@@ -171,12 +171,12 @@ input:focus {
    TEMA ESTADIO (light green)
    ══════════════════════════════════════════════════════════════════ */
 body[data-theme="estadio"] {
-  background: #f0f7ee;
+  background: #e8f4e8;
   background-image:
-    radial-gradient(at 0% 0%,   rgba(46,125,50,0.2)  0, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(27,94,32,0.15) 0, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(129,199,132,0.2) 0, transparent 40%);
-  color: #1a3a1a;
+    radial-gradient(at 0% 0%,   rgba(46,125,50,0.25)  0, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(27,94,32,0.2) 0, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(129,199,132,0.25) 0, transparent 40%);
+  color: #0f2510;
 }
 
 /* ── Inputs ─────────────────────────────────────────────────────── */
@@ -186,47 +186,47 @@ body[data-theme="estadio"] input[type=password],
 body[data-theme="estadio"] input[type=number],
 body[data-theme="estadio"] input[type=url],
 body[data-theme="estadio"] input[type=datetime-local] {
-  background: rgba(0,80,20,.05);
-  border-color: rgba(0,80,20,.2);
-  color: #1a3a1a;
+  background: rgba(0,60,10,.06);
+  border-color: rgba(0,80,20,.25);
+  color: #0f2510;
 }
 body[data-theme="estadio"] input:focus {
-  border-color: #2e7d32;
-  background: rgba(46,125,50,.07);
-  box-shadow: 0 0 0 3px rgba(46,125,50,.15);
+  border-color: #1b5e20;
+  background: rgba(27,94,32,.08);
+  box-shadow: 0 0 0 3px rgba(27,94,32,.18);
 }
 body[data-theme="estadio"] .si {
-  background: rgba(0,80,20,.06);
-  border-color: rgba(0,80,20,.18);
-  color: #1a3a1a;
+  background: rgba(0,60,10,.07);
+  border-color: rgba(0,80,20,.22);
+  color: #0f2510;
 }
 body[data-theme="estadio"] .si:focus {
-  border-color: #2e7d32;
-  background: rgba(46,125,50,.1);
-  box-shadow: 0 0 0 3px rgba(46,125,50,.15);
+  border-color: #1b5e20;
+  background: rgba(27,94,32,.1);
+  box-shadow: 0 0 0 3px rgba(27,94,32,.18);
 }
 
 /* ── Chips ──────────────────────────────────────────────────────── */
-body[data-theme="estadio"] .c-on   { background: rgba(46,125,50,.15); border-color: rgba(46,125,50,.5); color: #2e7d32; }
-body[data-theme="estadio"] .c-off  { background: rgba(0,60,10,.04); border-color: rgba(0,60,10,.12); color: rgba(0,60,10,.55); }
-body[data-theme="estadio"] .c-off:hover { background: rgba(0,60,10,.08); border-color: rgba(0,60,10,.25); color: #1a3a1a; }
-body[data-theme="estadio"] .c-on:hover  { background: rgba(46,125,50,.25); }
-body[data-theme="estadio"] .c-hit  { background: rgba(74,222,128,.15); border-color: rgba(74,222,128,.4); color: #166534; }
-body[data-theme="estadio"] .c-miss { background: rgba(0,60,10,.03); border-color: rgba(0,60,10,.07); color: rgba(0,60,10,.25); }
-body[data-theme="estadio"] .c-dim  { background: rgba(0,60,10,.03); border-color: rgba(0,60,10,.06); color: rgba(0,60,10,.25); }
+body[data-theme="estadio"] .c-on   { background: rgba(27,94,32,.18); border-color: rgba(27,94,32,.55); color: #1b5e20; }
+body[data-theme="estadio"] .c-off  { background: rgba(10,40,12,.05); border-color: rgba(10,40,12,.14); color: rgba(10,40,12,.6); }
+body[data-theme="estadio"] .c-off:hover { background: rgba(10,40,12,.1); border-color: rgba(10,40,12,.3); color: #0f2510; }
+body[data-theme="estadio"] .c-on:hover  { background: rgba(27,94,32,.28); }
+body[data-theme="estadio"] .c-hit  { background: rgba(22,101,52,.15); border-color: rgba(22,101,52,.45); color: #14532d; }
+body[data-theme="estadio"] .c-miss { background: rgba(10,40,12,.03); border-color: rgba(10,40,12,.08); color: rgba(10,40,12,.28); }
+body[data-theme="estadio"] .c-dim  { background: rgba(10,40,12,.03); border-color: rgba(10,40,12,.07); color: rgba(10,40,12,.28); }
 
 /* ── Modal ──────────────────────────────────────────────────────── */
 body[data-theme="estadio"] .modal-overlay { background: rgba(0,0,0,.6); }
-body[data-theme="estadio"] .modal-content { background: #fff; border-color: #2e7d32; color: #1a3a1a; }
+body[data-theme="estadio"] .modal-content { background: #fff; border-color: #1b5e20; color: #0f2510; }
 
 /* ── Scrollbar ──────────────────────────────────────────────────── */
-body[data-theme="estadio"] ::-webkit-scrollbar-thumb { background: rgba(46,125,50,.4); }
+body[data-theme="estadio"] ::-webkit-scrollbar-thumb { background: rgba(27,94,32,.45); }
 
 /* ── Primary button ─────────────────────────────────────────────── */
 body[data-theme="estadio"] .btn-primary {
-  background: linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%);
+  background: linear-gradient(135deg,#1b5e20 0%,#0a3d12 100%);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(46,125,50,.35);
+  box-shadow: 0 4px 14px rgba(27,94,32,.4);
 }
 
 /* ── Bracket match cards ────────────────────────────────────────── */
