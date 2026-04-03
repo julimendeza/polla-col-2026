@@ -28,11 +28,11 @@ function AdminView(p) {
   var tabs = [
     { id:"results",  l:t.results   },
     { id:"parts",    l:t.partTab   },
-    { id:"stats",    l:"\ud83d\udcca Stats"    },
-    { id:"picks",    l:"\ud83c\udfaf Picks"    },
+    { id:"stats",    l:"\ud83d\udcca Estad\u00edsticas" },
+    { id:"picks",    l:"\ud83c\udfaf Selecciones"    },
     { id:"email",    l:t.emailTab  },
-    { id:"data",     l:"\ud83d\udcbe Data"     },
-    { id:"access",   l:"\ud83d\udd11 Access"   },
+    { id:"data",     l:"\ud83d\udcbe Datos"          },
+    { id:"access",   l:"\ud83d\udd11 Acceso"         },
     { id:"settings", l:t.settingsTab }
   ];
 
@@ -752,7 +752,7 @@ function AdminStats(p) {
   return html`<div>
     <div style=${{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16,flexWrap:"wrap",gap:8}}>
       <div style=${{fontSize:13,color:"rgba(255,255,255,.4)"}}>
-        ${scored.length} participants \u00b7 sorted by total points
+        ${scored.length} participantes \u00b7 ordenados por puntos totales
       </div>
       <${Btn} v="secondary" onClick=${function(){ generateSummaryPDF(p.participants,p.results,p.settings,lang); }}
         sx=${{padding:"8px 14px",fontSize:12}}>
@@ -860,7 +860,7 @@ function AdminAccess(p) {
     var code=(newPin||"").trim().toUpperCase();
     if(!code){ flash("\u274c Enter a PIN code."); return; }
     if(accessMode==="robust"&&(!newName.trim()||!newEmail.trim())){
-      flash("\u274c Name and email required in Robust mode."); return;
+      flash("\u274c Nombre y email requeridos en modo Robusto."); return;
     }
     if(pinList.find(function(x){ return x.pin===code; })){ flash("\u274c PIN already exists."); return; }
     var entry={ pin:code, name:newName.trim(), email:newEmail.trim(), used:false };
@@ -886,7 +886,7 @@ function AdminAccess(p) {
   var unused=pinList.length-used;
 
   var modeInfo={
-    off:  lang==="es"?"Cualquiera puede registrar predicciones sin restricci\u00f3n.":"Anyone can register predictions — no restriction.",
+    off:  lang==="es"?"Cualquier persona puede registrar predicciones sin restricci\u00f3n.":"Cualquier persona puede registrar predicciones sin restricci\u00f3n.",
     simple:lang==="es"?"El usuario ingresa un PIN v\u00e1lido, luego completa su nombre y email.":"User enters a valid PIN, then fills in their own name and email.",
     robust:lang==="es"?"El PIN est\u00e1 vinculado a nombre y email. Se precargan y bloquean para el usuario.":"PIN is pre-linked to a name and email. These are pre-filled and locked for the user."
   };
@@ -894,11 +894,11 @@ function AdminAccess(p) {
   return html`<div style=${{maxWidth:560}}>
 
     <div style=${{marginBottom:20}}>
-      <div style=${{fontWeight:700,fontSize:14,marginBottom:12}}>Access Mode</div>
+      <div style=${{fontWeight:700,fontSize:14,marginBottom:12}}>Modo de acceso</div>
       <div style=${{display:"flex",flexDirection:"column",gap:8}}>
         ${["off","simple","robust"].map(function(m){
           var active=accessMode===m;
-          var labels={off:"Off \u2014 Open access",simple:"Simple \u2014 PIN required",robust:"Robust \u2014 PIN + pre-assigned identity"};
+          var labels={off:"Sin PIN \u2014 Acceso abierto",simple:"Simple \u2014 PIN requerido",robust:"Robusto \u2014 PIN + identidad preconfigurada"};
           return html`<button key=${m} onClick=${function(){setMode(m);}} style=${{
             padding:"12px 16px",borderRadius:12,cursor:"pointer",textAlign:"left",
             border:"2px solid "+(active?"#f59e0b":"rgba(255,255,255,.1)"),
@@ -1032,13 +1032,13 @@ function AdminData(p) {
         });
         var merged = existing.concat(toAdd);
         await p.saveParticipants(merged);
-        setStatus("\u2705 Merged " + toAdd.length + " new participants (kept " + (existing.length-1) + " existing).");
+        setStatus("\u2705 Merged " + toAdd.length + " nuevos participantes (se conservaron " + (existing.length-1) + " existentes).");
       } else {
         // Replace: full overwrite
         if (data.participants) await p.saveParticipants(data.participants);
         if (data.results)      await p.saveResults(data.results);
         if (data.settings)     await p.saveSettings(data.settings);
-        setStatus("\u2705 Replaced with " + data.participants.filter(function(x){return x.id!=="claude_bot";}).length + " participants.");
+        setStatus("\u2705 Replaced with " + data.participants.filter(function(x){return x.id!=="claude_bot";}).length + " participantes.");
       }
     } catch(e) {
       setStatus("Import failed: " + e.message, true);
@@ -1047,7 +1047,7 @@ function AdminData(p) {
 
   // ── Push to Firebase ────────────────────────────────────────────
   async function pushToFirebase() {
-    if (!db._url) { setStatus("Firebase not configured — add URL in Settings first.", true); return; }
+    if (!db._url) { setStatus("Firebase no configurado \u2014 agrega la URL en Ajustes primero.", true); return; }
     try {
       await Promise.all([
         db._fb("PUT", "wc26_p", p.participants),
@@ -1065,30 +1065,30 @@ function AdminData(p) {
   return html`<div style=${{maxWidth:520}}>
 
     <${Card} sx=${{marginBottom:16}}>
-      <div style=${{fontWeight:700,fontSize:14,marginBottom:4}}>Current data</div>
+      <div style=${{fontWeight:700,fontSize:14,marginBottom:4}}>Datos actuales</div>
       <div style=${{fontSize:13,color:"rgba(255,255,255,.45)",lineHeight:1.9}}>
         ${human.length} participants \u00a0\u00b7\u00a0
-        ${Object.keys(p.results.groups||{}).length} group results entered \u00a0\u00b7\u00a0
-        ${Object.keys(p.results.ko||{}).length} KO results entered
+        ${Object.keys(p.results.groups||{}).length} resultados de grupos ingresados \u00a0\u00b7\u00a0
+        ${Object.keys(p.results.ko||{}).length} resultados eliminatorias ingresados
       </div>
     </${Card}>
 
     <div style=${{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
 
       <div style=${{background:"rgba(74,222,128,.07)",border:"1px solid rgba(74,222,128,.2)",borderRadius:12,padding:"14px 16px"}}>
-        <div style=${{fontWeight:700,fontSize:13,color:"#4ade80",marginBottom:6}}>Export backup</div>
+        <div style=${{fontWeight:700,fontSize:13,color:"#4ade80",marginBottom:6}}>Exportar copia de seguridad</div>
         <div style=${{fontSize:12,color:"rgba(255,255,255,.4)",marginBottom:10}}>
           Downloads all participants, results and settings as a JSON file.
-          Do this before any risky change.
+          Hazlo antes de cualquier cambio importante.
         </div>
-        <${Btn} onClick=${exportData} sx=${{padding:"9px 20px"}}>Download backup</${Btn}>
+        <${Btn} onClick=${exportData} sx=${{padding:"9px 20px"}}>Descargar copia de seguridad</${Btn}>
       </div>
 
       <div style=${{background:"rgba(59,130,246,.07)",border:"1px solid rgba(59,130,246,.2)",borderRadius:12,padding:"14px 16px"}}>
-        <div style=${{fontWeight:700,fontSize:13,color:"#93c5fd",marginBottom:6}}>Import backup</div>
+        <div style=${{fontWeight:700,fontSize:13,color:"#93c5fd",marginBottom:6}}>Importar copia de seguridad</div>
         <div style=${{fontSize:12,color:"rgba(255,255,255,.4)",marginBottom:10}}>
-          <strong style=${{color:"#4ade80"}}>Merge</strong> — adds new participants from file, keeps existing ones (safe).<br/>
-          <strong style=${{color:"#f87171"}}>Replace</strong> — overwrites everything with file contents (destructive).
+          <strong style=${{color:"#4ade80"}}>Merge</strong> — agrega nuevos participantes del archivo, conserva los existentes (seguro).<br/>
+          <strong style=${{color:"#f87171"}}>Replace</strong> — sobreescribe todo con el contenido del archivo (destructivo).
         </div>
         <div style=${{display:"flex",gap:8,flexWrap:"wrap"}}>
           <label style=${{display:"inline-flex",alignItems:"center",gap:6,cursor:"pointer",
@@ -1105,20 +1105,20 @@ function AdminData(p) {
             fontFamily:"'DM Sans',sans-serif"}}>
             \u26a0\ufe0f Replace all
             <input type="file" accept=".json" style=${{display:"none"}}
-              onChange=${function(e){ if(e.target.files[0]&&confirm("This will overwrite ALL current data. Are you sure?")) importData(e.target.files[0],"replace"); e.target.value=""; }}/>
+              onChange=${function(e){ if(e.target.files[0]&&confirm("¿Esto sobreescribirá TODOS los datos actuales. ¿Estás seguro?")) importData(e.target.files[0],"replace"); e.target.value=""; }}/>
           </label>
         </div>
         ${importErr&&html`<div style=${{marginTop:8,fontSize:12,color:"#f87171"}}>${importErr}</div>`}
       </div>
 
       <div style=${{background:"rgba(245,158,11,.07)",border:"1px solid rgba(245,158,11,.2)",borderRadius:12,padding:"14px 16px"}}>
-        <div style=${{fontWeight:700,fontSize:13,color:"#fbbf24",marginBottom:6}}>Firebase sync</div>
+        <div style=${{fontWeight:700,fontSize:13,color:"#fbbf24",marginBottom:6}}>Sincronización Firebase</div>
         <div style=${{fontSize:12,color:"rgba(255,255,255,.4)",marginBottom:10}}>
-          Push all local data to Firebase now. Use this after migrating from localStorage or after an import.
+          Sube todos los datos locales a Firebase. Úsalo después de migrar desde localStorage o tras una importación.
           Configure the Firebase URL in Settings first.
         </div>
         <${Btn} onClick=${pushToFirebase} v=${db._url?"primary":"secondary"} sx=${{padding:"9px 20px"}}>
-          ${db._url?"Push all data to Firebase":"Firebase not configured"}
+          ${db._url?"Subir todos los datos a Firebase":"Firebase no configurado"}
         </${Btn}>
       </div>
 
