@@ -1,0 +1,167 @@
+/* ── Reset & Base ───────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #0f172a;
+  background-image: radial-gradient(at 0% 0%, rgba(30,58,138,0.5) 0, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(120,53,15,0.3) 0, transparent 50%);
+  background-attachment: fixed;
+  color: #f8fafc;
+  min-height: 100vh;
+}
+
+/* ── Typography ─────────────────────────────────────────────────────── */
+.bb { font-family: 'Bebas Neue', sans-serif; letter-spacing: .05em; }
+
+/* ── Animation ──────────────────────────────────────────────────────── */
+.fade { animation: fi .25s cubic-bezier(.22,1,.36,1); }
+@keyframes fi {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Score inputs ───────────────────────────────────────────────────── */
+.si {
+  width: 2.4rem; height: 2.4rem;
+  text-align: center; font-weight: 700; font-size: 1rem;
+  background: rgba(255,255,255,.08);
+  border: 1.5px solid rgba(255,255,255,.14);
+  border-radius: 9px; color: #f8fafc; outline: none;
+  transition: all .13s;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+.si:focus {
+  border-color: #fbbf24;
+  background: rgba(251,191,36,.1);
+  box-shadow: 0 0 0 3px rgba(251,191,36,.2);
+}
+.si[type=number] { -moz-appearance: textfield; }
+.si::-webkit-inner-spin-button,
+.si::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+/* ── Team chips ─────────────────────────────────────────────────────── */
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; user-select: none;
+  transition: all .12s; white-space: nowrap;
+  border: 1.5px solid transparent;
+}
+.c-on   { background: rgba(251,191,36,.2);  border-color: rgba(251,191,36,.6); color: #fbbf24; }
+.c-off  { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: rgba(255,255,255,.5); }
+.c-hit  { background: rgba(74,222,128,.15); border-color: rgba(74,222,128,.4);  color: #4ade80; cursor: default; }
+.c-miss { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.07);color: rgba(255,255,255,.2); cursor: default; }
+.c-dim  { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.06);color: rgba(255,255,255,.25); cursor: default; }
+.c-off:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.25); color: #f8fafc; }
+.c-on:hover  { background: rgba(251,191,36,.3); }
+
+/* ── Form inputs ────────────────────────────────────────────────────── */
+input[type=text],
+input[type=email],
+input[type=password],
+input[type=number],
+input[type=url],
+input[type=datetime-local] {
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(255,255,255,.13);
+  border-radius: 10px; padding: 10px 13px;
+  color: #f8fafc; font-size: 16px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none; transition: all .15s;
+  width: 100%;
+}
+input:focus {
+  border-color: #fbbf24;
+  background: rgba(251,191,36,.07);
+  box-shadow: 0 0 0 3px rgba(251,191,36,.15);
+}
+
+/* ── Modals ─────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.85); backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+.modal-content {
+  background: #1e293b; padding: 30px; border-radius: 20px;
+  max-width: 400px; width: 90%; text-align: center;
+  border: 1px solid #fbbf24;
+}
+
+/* ── Scrollbars ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(251,191,36,.3); border-radius: 99px; }
+
+/* ── Bracket horizontal scroll ──────────────────────────────────────── */
+.bscroll { overflow-x: auto; padding-bottom: 12px; -webkit-overflow-scrolling: touch; }
+.bscroll::-webkit-scrollbar { height: 4px; }
+
+/* ── Responsive grid helpers ────────────────────────────────────────── */
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+
+/* ── Nav ────────────────────────────────────────────────────────────── */
+.nav-links { display: flex; gap: 3px; align-items: center; flex-wrap: nowrap; }
+.nav-label { display: inline; }
+
+/* ── Leaderboard ────────────────────────────────────────────────────── */
+.lb-grid       { display: grid; grid-template-columns: 44px 1fr 64px 50px 50px 50px; gap: 4px; }
+.lb-grid-xs    { display: grid; grid-template-columns: 36px 1fr 56px; gap: 4px; }
+.lb-col-hide   { display: table-cell; }
+
+/* ── Match row ──────────────────────────────────────────────────────── */
+.mrow-team { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 600px) {
+  .nav-label { display: none; }
+  .nav-links  { gap: 1px; }
+  .grid-3 { grid-template-columns: repeat(2,1fr); }
+  .lb-col-hide { display: none; }
+  .lb-grid     { grid-template-columns: 36px 1fr 56px; }
+}
+@media (max-width: 400px) {
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .nav-label { display: none; }
+  .nav-icon  { display: inline !important; }
+}
+
+/* ── Bracket layout classes (for future use) ────────────────────────── */
+.bracket-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  gap: 30px;
+  padding: 40px 10px;
+  overflow-x: auto;
+}
+.bracket-round {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  min-width: 160px;
+}
+.bracket-match {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  margin: 10px 0;
+  padding: 8px;
+  position: relative;
+}
+/* Primary button style */
+.btn-primary {
+  background: linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);
+  color: #000;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(245,158,11,.39);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: 'DM Sans',sans-serif;
+  font-size: 14px;
+}
