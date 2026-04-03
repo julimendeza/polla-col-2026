@@ -82,7 +82,7 @@ function MRow(p) {
       <span style=${{ fontSize:12, fontWeight:500, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>${teamName(p.match.away,lang)}</span>
     </div>
     ${pts !== null && html`<span style=${{ fontSize:11, fontWeight:700, flexShrink:0, minWidth:28, textAlign:"right",
-      color: pts>=6?(thm.id==="estadio"?"#166534":"#4ade80"):pts>=3?thm.accent:pts>0?"#60a5fa":thm.inv(.2) }}>
+      color: pts>=6?("#4ade80"):pts>=3?thm.accent:pts>0?"#60a5fa":thm.inv(.2) }}>
       ${pts > 0 ? "+" + pts : (pts === 0 && hv !== "" ? "0" : "")}
     </span>`}
   </div>`;
@@ -110,7 +110,7 @@ function StandingsTable(p) {
   return html`<div style=${{ marginTop:12, padding:"10px 12px", background:thm.inv(.03), borderRadius:12, border:thm.bdr(1,.07) }}>
     <div style=${{ display:"flex", justifyContent:"space-between", marginBottom:7 }}>
       <span style=${{ fontSize:10, fontWeight:700, color:thm.inv(.3), letterSpacing:".08em" }}>${t.standingsLabel} ${p.group}</span>
-      <span style=${{ fontSize:10, color: done ? (thm.id==="estadio"?"rgba(22,101,52,.9)":"rgba(74,222,128,.7)") : thm.a(.6) }}>${done ? "\u2713 " + t.qualifyDirect : "* projected"}</span>
+      <span style=${{ fontSize:10, color: done ? ("rgba(74,222,128,.7)") : thm.a(.6) }}>${done ? "\u2713 " + t.qualifyDirect : "* projected"}</span>
     </div>
     <div style=${{ display:"grid", gridTemplateColumns:"14px 1fr 22px 22px 22px 22px 42px 26px 28px", gap:2, fontSize:10, color:thm.inv(.25), marginBottom:4, padding:"0 2px" }}>
       <span/><span/>
@@ -143,9 +143,9 @@ function StandingsTable(p) {
                 thirdOut  ? "1px solid rgba(255,100,100,.1)"  : "1px solid transparent";
       var nameCol = isTop2||thirdIn ? thm.inv(.85) :
                    thirdMaybe       ? thm.inv(.55) : thm.inv(.3);
-      var ptsCol  = isTop2||thirdIn ? (thm.id==="estadio"?"#166534":"#4ade80")    :
+      var ptsCol  = isTop2||thirdIn ? ("#4ade80")    :
                    thirdMaybe       ? thm.accent    :
-                   thirdOut         ? (thm.id==="estadio"?"#991b1b":"#f87171") : thm.inv(.3);
+                   thirdOut         ? ("#f87171") : thm.inv(.3);
 
       return html`<div key=${r.team} style=${{
         display:"grid", gridTemplateColumns:"14px 1fr 22px 22px 22px 22px 42px 26px 28px",
@@ -158,7 +158,7 @@ function StandingsTable(p) {
           return html`<span key=${k} style=${{ textAlign:"center", color:thm.inv(.35), fontSize:11 }}>${v}</span>`;
         })}
         <span style=${{ textAlign:"center", color:thm.inv(.35), fontSize:11 }}>${r.gf}:${r.ga}</span>
-        <span style=${{ textAlign:"center", fontSize:11, color: r.gd>0?(thm.id==="estadio"?"#166534":"#4ade80"):r.gd<0?(thm.id==="estadio"?"#991b1b":"#f87171"):thm.inv(.35) }}>${r.gd > 0 ? "+" : ""}${r.gd}</span>
+        <span style=${{ textAlign:"center", fontSize:11, color: r.gd>0?("#4ade80"):r.gd<0?("#f87171"):thm.inv(.35) }}>${r.gd > 0 ? "+" : ""}${r.gd}</span>
         <span style=${{ textAlign:"center", fontWeight:700, fontSize:12, color:ptsCol }}>${r.pts}</span>
       </div>`;
     })}
@@ -178,9 +178,9 @@ function GroupTabs(p) {
       var done = groupDone(p.isResult ? (p.preds && p.preds.groups || {}) : (p.preds || {}), g);
       return html`<button key=${g} onClick=${function(){ p.onChange(g); }} style=${{
         padding:"4px 9px", borderRadius:7, fontSize:12, fontWeight:700, cursor:"pointer",
-        border: "1.5px solid " + (p.active===g ? thm.accent : done ? (thm.id==="estadio"?"rgba(22,101,52,.4)":"rgba(74,222,128,.3)") : thm.inv(.1)),
-        background: p.active===g ? thm.accent : done ? (thm.id==="estadio"?"rgba(22,101,52,.1)":"rgba(74,222,128,.08)") : "transparent",
-        color: p.active===g ? thm.onAccent : done ? (thm.id==="estadio"?"#166534":"#4ade80") : thm.inv(.5),
+        border: "1.5px solid " + (p.active===g ? thm.accent : done ? ("rgba(74,222,128,.3)") : thm.inv(.1)),
+        background: p.active===g ? thm.accent : done ? ("rgba(74,222,128,.08)") : "transparent",
+        color: p.active===g ? thm.onAccent : done ? ("#4ade80") : thm.inv(.5),
         fontFamily:"'DM Sans',sans-serif"
       }}>${g}${done && p.active !== g ? " \u2713" : ""}</button>`;
     })}
@@ -361,17 +361,17 @@ function BCol(p) {
       return html`<div key=${i} style=${{
         position:'absolute',top:top+'px',left:0,right:0,height:PH+'px',
         display:'flex',alignItems:'center',gap:3,padding:'0 4px',borderRadius:5,
-        background:a?(thm.id==="estadio"?'rgba(22,101,52,.12)':'rgba(74,222,128,.12)'):e?thm.inv(.02):thm.inv(.06),
-        border:'1px solid '+(a?(thm.id==="estadio"?'rgba(22,101,52,.45)':'rgba(74,222,128,.35)'):e?thm.inv(.07):thm.inv(.12)),
+        background:a?'rgba(74,222,128,.12)':e?thm.inv(.02):thm.inv(.06),
+        border:'1px solid '+(a?'rgba(74,222,128,.35)':e?thm.inv(.07):thm.inv(.12)),
       }}>
         ${team
           ? html`
             <${FlagImg} team=${team} dim=${e}/>
             <span style=${{fontSize:8,fontWeight:a?600:400,flex:1,minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginLeft:2,
-              color:a?(thm.id==="estadio"?'#166534':'#4ade80'):e?thm.inv(.35):thm.inv(.75)}}>${teamName(team,lang)}</span>
+              color:a?'#4ade80':e?thm.inv(.35):thm.inv(.75)}}>${teamName(team,lang)}</span>
             ${score&&html`<span style=${{flexShrink:0,fontSize:8,fontWeight:800,background:thm.a(.3),
               border:thm.bdra(1,.6),borderRadius:3,padding:'0 3px',
-              color:thm.id==="estadio"?thm.onAccent:'#fde68a',whiteSpace:'nowrap'}}>${score}</span>`}
+              color:'#fde68a',whiteSpace:'nowrap'}}>${score}</span>`}
           `
           : html`<span style=${{fontSize:8,color:thm.inv(.18),fontStyle:'italic',flex:1}}>TBD</span>`
         }
@@ -384,7 +384,7 @@ function BCol(p) {
 function BConn(p) {
   var thm = useLang().thm || THEMES.dark;
   var outer=p.outer,inner=p.inner,dir=p.dir,H=p.H,CW=p.CW;
-  var stk=thm.id==="estadio"?thm.inv(.35):thm.inv(.15);
+  var stk=thm.inv(.15);
   function ctrO(i){return(i+0.5)*H/outer.length;}
   function ctrI(i){return(i+0.5)*H/inner.length;}
   return html`<svg style=${{width:CW+'px',height:H+'px',flexShrink:0,display:'block',overflow:'visible'}}
@@ -405,7 +405,7 @@ function BConn(p) {
 
 function BFinalConn(p) {
   var thm = useLang().thm || THEMES.dark;
-  var H=p.H,CW=p.CW,dir=p.dir,stk=thm.id==="estadio"?thm.inv(.35):thm.inv(.15);
+  var H=p.H,CW=p.CW,dir=p.dir,stk=thm.inv(.15);
   var c1=H/4,c2=3*H/4,mid=H/2;
   return html`<svg style=${{width:CW+'px',height:H+'px',flexShrink:0,display:'block'}} viewBox=${'0 0 '+CW+' '+H}>
     ${dir==='lr'

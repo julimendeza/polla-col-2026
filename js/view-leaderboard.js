@@ -88,7 +88,7 @@ function LeaderboardView(p) {
                   </div>
                 </div>
                 <div style=${{ textAlign:"right", fontWeight:800, fontSize:20, color:thm.accent }}>${px.pts}</div>
-                <div class="lb-col-hide" style=${{ textAlign:"right", fontSize:13, color: chHit ? thm.id==="estadio"?"#166534":"#4ade80" : thm.inv(.28) }}>
+                <div class="lb-col-hide" style=${{ textAlign:"right", fontSize:13, color: chHit ? "#4ade80" : thm.inv(.28) }}>
                   ${px.detail && px.detail.champion && px.detail.champion.earned || 0}
                 </div>
                 <div class="lb-col-hide" style=${{ textAlign:"right", fontSize:13, color:thm.inv(.45) }}>

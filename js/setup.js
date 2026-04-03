@@ -155,22 +155,24 @@ var THEMES = {
   },
   estadio: {
     id: 'estadio', label: '🏟 Estadio',
-    accent:    '#1b5e20',
-    accentD:   '#0a3d12',
-    accentGrad:'linear-gradient(135deg,#1b5e20,#0a3d12)',
-    onAccent:  '#fff',
-    deep:      '#b8ddb8',
-    row1:      '#d4edd4',
-    tourBg:    '#fff',
-    loadBg:    '#b8ddb8',
-    loadColor: 'rgba(27,94,32,.8)',
-    bodyBg:    '#e8f4e8',
-    bodyGrad:  'radial-gradient(at 0% 0%, rgba(46,125,50,0.25) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(27,94,32,0.2) 0, transparent 50%), radial-gradient(at 50% 100%, rgba(129,199,132,0.25) 0, transparent 40%)',
-    a:    function(x){ return 'rgba(27,94,32,'+x+')'; },
-    // inv(x) maps dark-theme white-transparent to dark text on light bg
-    // Strategy: just use dark gray with proportionally increased opacity
-    inv:  function(x){ return x<0.1 ? 'rgba(20,40,20,'+x+')' : 'rgba(20,40,20,'+Math.min(1,x+0.5).toFixed(2)+')'; },
-    bdr:  function(w,x){ return w+'px solid rgba(0,80,20,'+(Math.round(x*1.8*10)/10)+')'; },
-    bdra: function(w,x){ return w+'px solid rgba(27,94,32,'+x+')'; }
+    accent:    '#22c55e',
+    accentD:   '#16a34a',
+    accentGrad:'linear-gradient(135deg,#22c55e,#16a34a)',
+    onAccent:  '#064e3b',
+    deep:      '#071a0f',
+    row1:      '#0c2318',
+    tourBg:    '#0d1f14',
+    loadBg:    '#071a0f',
+    loadColor: '#22c55e',
+    bodyBg:    '#0a1a10',
+    bodyGrad:  'radial-gradient(at 0% 0%, rgba(20,83,45,0.6) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(5,46,22,0.5) 0, transparent 50%), radial-gradient(at 50% 50%, rgba(34,197,94,0.04) 0, transparent 60%)',
+    // inv(x): white-bone text hierarchy on dark green bg
+    // x < 0.12 = subtle backgrounds, x >= 0.12 = text (maps to #f1f5f9 at varying opacity)
+    inv:  function(x){ return x<0.12 ? 'rgba(241,245,249,'+x+')' : 'rgba(241,245,249,'+Math.min(1,x+0.35).toFixed(2)+')'; },
+    // muted: zinc gray for secondary text
+    muted: '#94a3b8',
+    a:    function(x){ return 'rgba(34,197,94,'+x+')'; },
+    bdr:  function(w,x){ return w+'px solid rgba(20,83,45,'+(Math.min(1,x*1.5).toFixed(2))+')'; },
+    bdra: function(w,x){ return w+'px solid rgba(34,197,94,'+x+')'; }
   }
 };

@@ -15,7 +15,7 @@ function Nav(p) {
 
   return html`<nav style=${{
     position:"sticky", top:0, zIndex:100,
-    background: thm.id==="estadio" ? "rgba(240,247,238,.97)" : "rgba(8,15,28,.97)",
+    background: thm.id==="estadio" ? "rgba(7,26,15,.97)" : "rgba(8,15,28,.97)",
     backdropFilter:"blur(14px)",
     borderBottom:thm.bdr(1,.07)
   }}>
