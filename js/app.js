@@ -153,6 +153,24 @@ function App() {
         saveSettings=${saveSettings}
         saveParticipants=${sv("wc26_p", setP)}/>`}
 
+      <!-- Floating theme toggle -->
+      <button
+        onClick=${function(){ setTheme(theme === 'dark' ? 'estadio' : 'dark'); }}
+        title=${theme === 'dark' ? 'Cambiar a tema Estadio' : 'Cambiar a tema Noche'}
+        style=${{
+          position:"fixed", bottom:22, right:18, zIndex:9999,
+          width:44, height:44, borderRadius:"50%",
+          background: thm.accent,
+          color: thm.onAccent,
+          border:"none", cursor:"pointer",
+          fontSize:20, lineHeight:1,
+          boxShadow:"0 4px 16px "+thm.a(.45),
+          display:"flex", alignItems:"center", justifyContent:"center",
+          transition:"all .2s",
+          fontFamily:"'DM Sans',sans-serif"
+        }}
+      >${theme === 'dark' ? '🏟' : '🌙'}</button>
+
     </div>
   </${LangCtx.Provider}>`;
 }
