@@ -5,7 +5,8 @@ function App() {
   var rState     = useState(Object.assign({}, ER)); var results  = rState[0], setR = rState[1];
   var sState     = useState(Object.assign({}, DEF)); var settings = sState[0], setS = sState[1];
   var readyState = useState(false);     var ready = readyState[0], setReady = readyState[1];
-  var langState  = useState("es"); // locked to Spanish      var lang  = langState[0],  setLangRaw = langState[1];
+  var langState  = useState("es"); // locked to Spanish      
+  var lang  = langState[0],  setLangRaw = langState[1];
   var dbStatusState = useState("local"); var dbStatus = dbStatusState[0], setDbStatus = dbStatusState[1];
 
   // ── Load persisted data on mount ─────────────────────────────────
