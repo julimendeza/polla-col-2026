@@ -1,16 +1,16 @@
 // ── Group / Team definitions ─────────────────────────────────────────
 var TBG = {
-  A: ["Mexico","South Africa","South Korea","Playoff D"],
-  B: ["Canada","Playoff A","Qatar","Switzerland"],
+  A: ["Mexico","South Africa","South Korea","Czechia"],
+  B: ["Canada","Bosnia & Herz.","Qatar","Switzerland"],
   C: ["Brazil","Morocco","Haiti","Scotland"],
-  D: ["USA","Paraguay","Australia","Playoff C"],
+  D: ["USA","Paraguay","Australia","Turkey"],
   E: ["Germany","Cura\u00e7ao","Ivory Coast","Ecuador"],
-  F: ["Netherlands","Japan","Playoff B","Tunisia"],
+  F: ["Netherlands","Japan","Sweden","Tunisia"],
   G: ["Belgium","Egypt","Iran","New Zealand"],
   H: ["Spain","Cape Verde","Saudi Arabia","Uruguay"],
-  I: ["France","Senegal","Playoff 2","Norway"],
+  I: ["France","Senegal","Iraq","Norway"],
   J: ["Argentina","Algeria","Austria","Jordan"],
-  K: ["Portugal","Playoff 1","Uzbekistan","Colombia"],
+  K: ["Portugal","DR Congo","Uzbekistan","Colombia"],
   L: ["England","Croatia","Ghana","Panama"]
 };
 var GROUPS = Object.keys(TBG);
@@ -153,11 +153,11 @@ var DEF = {
   // Each entry: { teamA, teamB, confirmed, winner }
   playoffs: {
     "Playoff A": { teamA:"Bosnia & Herz.", teamB:"Italy",    confirmed:true, winner:"Bosnia & Herz." },
-    "Playoff B": { teamA:"Sweden",         teamB:"Poland",   confirmed:true, winner:"Sweden" },
-    "Playoff C": { teamA:"Kosovo",         teamB:"Turkey",   confirmed:true, winner:"Turkey" },
+    "Sweden": { teamA:"Sweden",         teamB:"Poland",   confirmed:true, winner:"Sweden" },
+    "Turkey": { teamA:"Kosovo",         teamB:"Turkey",   confirmed:true, winner:"Turkey" },
     "Playoff D": { teamA:"Denmark",        teamB:"Czechia",  confirmed:true, winner:"Czechia" },
-    "Playoff 1": { teamA:"Jamaica",        teamB:"DR Congo", confirmed:true, winner:"DR Congo" },
-    "Playoff 2": { teamA:"Bolivia",        teamB:"Iraq",     confirmed:true, winner:"Iraq" }
+    "DR Congo": { teamA:"Jamaica",        teamB:"DR Congo", confirmed:true, winner:"DR Congo" },
+    "Iraq": { teamA:"Bolivia",        teamB:"Iraq",     confirmed:true, winner:"Iraq" }
   },
   scoring: {
     groupResult: 3,

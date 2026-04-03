@@ -152,7 +152,7 @@ async function generateTCPDF(settings, lang) {
 
   // All text strings
   var TX = es ? {
-    header:   "LA TRIBUNA 2026 \u2014 SOUTHAMERICAN FOOTBALL FRIENDS SWEEPSTAKE",
+    header:   "POLLA MUNDIALISTA 2026 \u2014 AMIGOS MUNDIALISTAS",
     title:    "Reglas del Juego",
     subtitle: "Copa del Mundo FIFA 2026 \u00b7 EE.UU. \u00b7 Canad\u00e1 \u00b7 M\u00e9xico \u00b7 11 Jun \u2013 19 Jul, 2026",
     s1:"1. Inscripci\u00f3n",
@@ -214,7 +214,7 @@ async function generateTCPDF(settings, lang) {
     footer:"Polla Mundialista 2026  \u00b7  Generado el "+new Date().toLocaleDateString("es-CO"),
     filename:"LaTribuna2026_Reglas_del_Juego.pdf"
   } : {
-    header:   "LA TRIBUNA 2026 \u2014 SOUTHAMERICAN FOOTBALL FRIENDS SWEEPSTAKE",
+    header:   "POLLA MUNDIALISTA 2026 \u2014 AMIGOS MUNDIALISTAS",
     title:    "Game Rules",
     subtitle: "FIFA World Cup 2026 \u00b7 USA \u00b7 Canada \u00b7 Mexico \u00b7 June 11 \u2013 July 19, 2026",
     s1:"1. Entry",

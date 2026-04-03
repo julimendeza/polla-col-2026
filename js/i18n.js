@@ -118,7 +118,7 @@ var T = {
   },
 
   es: {
-    title:      "LA TRIBUNA - MUNDIAL 2026",
+    title:      "POLLA MUNDIALISTA 2026",
     sub:        "Predice resultados entre amigos y apuesta por el mejor \u00b7 USA \u00b7 Canad\u00e1 \u00b7 M\u00e9xico 2026",
     predict:    "Predecir",
     table:      "\ud83c\udfc5 Tabla",
