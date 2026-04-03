@@ -118,7 +118,7 @@ function StandingsTable(p) {
       <span style=${{ textAlign:"center" }}>W</span>
       <span style=${{ textAlign:"center" }}>D</span>
       <span style=${{ textAlign:"center" }}>L</span>
-      <span style=${{ textAlign:"center" }}>GF:GA</span>
+      <span style=${{ textAlign:"center" }}>GF:GC</span>
       <span style=${{ textAlign:"center" }}>GD</span>
       <span style=${{ textAlign:"center", fontWeight:700 }}>Pts</span>
     </div>
@@ -361,17 +361,17 @@ function BCol(p) {
       return html`<div key=${i} style=${{
         position:'absolute',top:top+'px',left:0,right:0,height:PH+'px',
         display:'flex',alignItems:'center',gap:3,padding:'0 4px',borderRadius:5,
-        background:a?'rgba(74,222,128,.12)':e?thm.inv(.02):thm.inv(.06),
-        border:'1px solid '+(a?'rgba(74,222,128,.35)':e?thm.inv(.07):thm.inv(.12)),
+        background:a?(thm.id==="estadio"?'rgba(22,101,52,.12)':'rgba(74,222,128,.12)'):e?thm.inv(.02):thm.inv(.06),
+        border:'1px solid '+(a?(thm.id==="estadio"?'rgba(22,101,52,.45)':'rgba(74,222,128,.35)'):e?thm.inv(.07):thm.inv(.12)),
       }}>
         ${team
           ? html`
             <${FlagImg} team=${team} dim=${e}/>
             <span style=${{fontSize:8,fontWeight:a?600:400,flex:1,minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginLeft:2,
-              color:a?'#4ade80':e?thm.inv(.35):thm.inv(.75)}}>${teamName(team,lang)}</span>
+              color:a?(thm.id==="estadio"?'#166534':'#4ade80'):e?thm.inv(.35):thm.inv(.75)}}>${teamName(team,lang)}</span>
             ${score&&html`<span style=${{flexShrink:0,fontSize:8,fontWeight:800,background:thm.a(.3),
               border:thm.bdra(1,.6),borderRadius:3,padding:'0 3px',
-              color:'#fde68a',whiteSpace:'nowrap'}}>${score}</span>`}
+              color:thm.id==="estadio"?thm.onAccent:'#fde68a',whiteSpace:'nowrap'}}>${score}</span>`}
           `
           : html`<span style=${{fontSize:8,color:thm.inv(.18),fontStyle:'italic',flex:1}}>TBD</span>`
         }
@@ -384,7 +384,7 @@ function BCol(p) {
 function BConn(p) {
   var thm = useLang().thm || THEMES.dark;
   var outer=p.outer,inner=p.inner,dir=p.dir,H=p.H,CW=p.CW;
-  var stk=thm.inv(.15);
+  var stk=thm.id==="estadio"?thm.inv(.35):thm.inv(.15);
   function ctrO(i){return(i+0.5)*H/outer.length;}
   function ctrI(i){return(i+0.5)*H/inner.length;}
   return html`<svg style=${{width:CW+'px',height:H+'px',flexShrink:0,display:'block',overflow:'visible'}}
@@ -405,7 +405,7 @@ function BConn(p) {
 
 function BFinalConn(p) {
   var thm = useLang().thm || THEMES.dark;
-  var H=p.H,CW=p.CW,dir=p.dir,stk=thm.inv(.15);
+  var H=p.H,CW=p.CW,dir=p.dir,stk=thm.id==="estadio"?thm.inv(.35):thm.inv(.15);
   var c1=H/4,c2=3*H/4,mid=H/2;
   return html`<svg style=${{width:CW+'px',height:H+'px',flexShrink:0,display:'block'}} viewBox=${'0 0 '+CW+' '+H}>
     ${dir==='lr'
@@ -563,7 +563,7 @@ function BracketView(p) {
             background:ch?thm.a(.15):thm.inv(.04),
             border:(ch?thm.bdra(2,.5):thm.bdr(2,.1))}}>
             ${ch
-              ? html`<${FlagImg} team=${ch}/><div style=${{fontWeight:700,color:'#fbbf24',fontSize:12,marginTop:3}}>${teamName(ch,lang)}</div>`
+              ? html`<${FlagImg} team=${ch}/><div style=${{fontWeight:700,color:thm.accent,fontSize:12,marginTop:3}}>${teamName(ch,lang)}</div>`
               : html`<div style=${{fontSize:9,color:thm.inv(.25),fontStyle:'italic',padding:'4px 0'}}>TBD</div>`}
           </div>       
 
@@ -576,7 +576,7 @@ function BracketView(p) {
               var rs = champIsHome ? C.final.score.a : C.final.score.h;
               return html`
                 <span style=${{fontSize:9,color:thm.inv(.5)}}>${ch?teamName(ch,lang):'?'}</span>
-                <span style=${{fontWeight:800,fontSize:14,color:'#fbbf24',letterSpacing:2}}>${cs}-${rs}</span>
+                <span style=${{fontWeight:800,fontSize:14,color:thm.accent,letterSpacing:2}}>${cs}-${rs}</span>
                 <span style=${{fontSize:9,color:thm.inv(.5)}}>${ru?teamName(ru,lang):'?'}</span>
               `;
             })()}
