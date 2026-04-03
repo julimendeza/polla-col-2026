@@ -166,3 +166,71 @@ input:focus {
   font-family: 'DM Sans',sans-serif;
   font-size: 14px;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   TEMA ESTADIO (light green)
+   ══════════════════════════════════════════════════════════════════ */
+body[data-theme="estadio"] {
+  background: #f0f7ee;
+  background-image:
+    radial-gradient(at 0% 0%,   rgba(46,125,50,0.2)  0, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(27,94,32,0.15) 0, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(129,199,132,0.2) 0, transparent 40%);
+  color: #1a3a1a;
+}
+
+/* ── Inputs ─────────────────────────────────────────────────────── */
+body[data-theme="estadio"] input[type=text],
+body[data-theme="estadio"] input[type=email],
+body[data-theme="estadio"] input[type=password],
+body[data-theme="estadio"] input[type=number],
+body[data-theme="estadio"] input[type=url],
+body[data-theme="estadio"] input[type=datetime-local] {
+  background: rgba(0,80,20,.05);
+  border-color: rgba(0,80,20,.2);
+  color: #1a3a1a;
+}
+body[data-theme="estadio"] input:focus {
+  border-color: #2e7d32;
+  background: rgba(46,125,50,.07);
+  box-shadow: 0 0 0 3px rgba(46,125,50,.15);
+}
+body[data-theme="estadio"] .si {
+  background: rgba(0,80,20,.06);
+  border-color: rgba(0,80,20,.18);
+  color: #1a3a1a;
+}
+body[data-theme="estadio"] .si:focus {
+  border-color: #2e7d32;
+  background: rgba(46,125,50,.1);
+  box-shadow: 0 0 0 3px rgba(46,125,50,.15);
+}
+
+/* ── Chips ──────────────────────────────────────────────────────── */
+body[data-theme="estadio"] .c-on   { background: rgba(46,125,50,.15); border-color: rgba(46,125,50,.5); color: #2e7d32; }
+body[data-theme="estadio"] .c-off  { background: rgba(0,60,10,.04); border-color: rgba(0,60,10,.12); color: rgba(0,60,10,.55); }
+body[data-theme="estadio"] .c-off:hover { background: rgba(0,60,10,.08); border-color: rgba(0,60,10,.25); color: #1a3a1a; }
+body[data-theme="estadio"] .c-on:hover  { background: rgba(46,125,50,.25); }
+body[data-theme="estadio"] .c-hit  { background: rgba(74,222,128,.15); border-color: rgba(74,222,128,.4); color: #166534; }
+body[data-theme="estadio"] .c-miss { background: rgba(0,60,10,.03); border-color: rgba(0,60,10,.07); color: rgba(0,60,10,.25); }
+body[data-theme="estadio"] .c-dim  { background: rgba(0,60,10,.03); border-color: rgba(0,60,10,.06); color: rgba(0,60,10,.25); }
+
+/* ── Modal ──────────────────────────────────────────────────────── */
+body[data-theme="estadio"] .modal-overlay { background: rgba(0,0,0,.6); }
+body[data-theme="estadio"] .modal-content { background: #fff; border-color: #2e7d32; color: #1a3a1a; }
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+body[data-theme="estadio"] ::-webkit-scrollbar-thumb { background: rgba(46,125,50,.4); }
+
+/* ── Primary button ─────────────────────────────────────────────── */
+body[data-theme="estadio"] .btn-primary {
+  background: linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(46,125,50,.35);
+}
+
+/* ── Bracket match cards ────────────────────────────────────────── */
+body[data-theme="estadio"] .bracket-match {
+  background: rgba(0,60,10,.04);
+  border-color: rgba(0,80,20,.14);
+}

@@ -7,13 +7,13 @@ var btnBase = {
   justifyContent: "center", gap: 6,
   fontFamily: "'DM Sans', sans-serif"
 };
-var btnVariants = {
-  primary:   { background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#000" },
-  secondary: { background: "rgba(255,255,255,.08)", color: "#fff", border: "1.5px solid rgba(255,255,255,.12)" },
-  ghost:     { background: "none", color: "rgba(255,255,255,.5)" }
-};
-
 function Btn(p) {
+  var thm = useLang().thm || THEMES.dark;
+  var btnVariants = {
+    primary:   { background: thm.accentGrad, color: thm.onAccent },
+    secondary: { background: thm.inv(.08), color: thm.inv(.9), border: thm.bdr(1.5,.12) },
+    ghost:     { background: "none", color: thm.inv(.5) }
+  };
   var v = p.v || "primary";
   var s = Object.assign({}, btnBase, btnVariants[v], {
     padding:  (p.sx && p.sx.padding)  || "10px 20px",
@@ -27,18 +27,19 @@ function Btn(p) {
 }
 
 function Card(p) {
-  return html`<div style=${{ background:"rgba(255,255,255,.04)", border:"1.5px solid rgba(255,255,255,.08)", borderRadius:16, padding:20, ...(p.sx||{}) }}>${p.children}</div>`;
+  var thm = useLang().thm || THEMES.dark;
+  return html`<div style=${{ background:thm.inv(.04), border:thm.bdr(1.5,.08), borderRadius:16, padding:20, ...(p.sx||{}) }}>${p.children}</div>`;
 }
 
 function Field(p) {
   return html`<div style=${{ marginBottom:16 }}>
-    <label style=${{ fontSize:13, color:"rgba(255,255,255,.6)", display:"block", marginBottom:6 }}>${p.label}</label>
+    <label style=${{ fontSize:13, color:thm.inv(.6), display:"block", marginBottom:6 }}>${p.label}</label>
     ${p.children}
   </div>`;
 }
 
 function PBar(p) {
-  return html`<div style=${{ background:"rgba(255,255,255,.08)", borderRadius:99, height:5, overflow:"hidden" }}>
+  return html`<div style=${{ background:thm.inv(.08), borderRadius:99, height:5, overflow:"hidden" }}>
     <div style=${{ height:5, borderRadius:99, background:"linear-gradient(90deg,#f59e0b,#d97706)", transition:"width .3s", width: Math.min(100, (p.v/p.max)*100) + "%" }}/>
   </div>`;
 }
@@ -53,15 +54,15 @@ function SI(p) {
 
 // - Match score row -
 function MRow(p) {
-  var lang=useLang().lang;
+  var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
   var res = p.res, hv = p.hv || "", av = p.av || "";
   var st  = (res && res.h !== "") ? mSt({ h:hv, a:av }, res) : null;
   var bg  = st==="exact"  ? "rgba(34,197,94,.12)"  :
-            st==="result" ? "rgba(245,158,11,.1)"  :
-            st==="partial"? "rgba(59,130,246,.08)" : "rgba(255,255,255,.04)";
+            st==="result" ? thm.a(.1)  :
+            st==="partial"? "rgba(59,130,246,.08)" : thm.inv(.04);
   var bd  = st==="exact"  ? "rgba(34,197,94,.35)"  :
-            st==="result" ? "rgba(245,158,11,.25)" :
-            st==="partial"? "rgba(59,130,246,.2)"  : "rgba(255,255,255,.09)";
+            st==="result" ? thm.a(.25) :
+            st==="partial"? "rgba(59,130,246,.2)"  : thm.inv(.09);
   var pts = st ? scoreMatch({ h:hv, a:av }, res) : null;
 
   return html`<div style=${{ display:"flex", alignItems:"center", gap:8, padding:"8px 10px", borderRadius:12, border:"1.5px solid "+bd, marginBottom:5, background:bg, transition:"all .15s" }}>
@@ -71,7 +72,7 @@ function MRow(p) {
     </div>
     <div style=${{ display:"flex", alignItems:"center", gap:4, flexShrink:0 }}>
       <${SI} val=${hv} onChange=${p.onH}/>
-      <span style=${{ color:"rgba(255,255,255,.2)", fontSize:10 }}>-</span>
+      <span style=${{ color:thm.inv(.2), fontSize:10 }}>-</span>
       <${SI} val=${av} onChange=${p.onA}/>
     </div>
     <div style=${{ flex:1, display:"flex", alignItems:"center", gap:5, overflow:"hidden" }}>
@@ -79,7 +80,7 @@ function MRow(p) {
       <span style=${{ fontSize:12, fontWeight:500, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>${teamName(p.match.away,lang)}</span>
     </div>
     ${pts !== null && html`<span style=${{ fontSize:11, fontWeight:700, flexShrink:0, minWidth:28, textAlign:"right",
-      color: pts>=6?"#4ade80":pts>=3?"#fbbf24":pts>0?"#60a5fa":"rgba(255,255,255,.2)" }}>
+      color: pts>=6?"#4ade80":pts>=3?thm.accent:pts>0?"#60a5fa":thm.inv(.2) }}>
       ${pts > 0 ? "+" + pts : (pts === 0 && hv !== "" ? "0" : "")}
     </span>`}
   </div>`;
@@ -87,7 +88,7 @@ function MRow(p) {
 
 // - Live group standings table -
 function StandingsTable(p) {
-  var lang=useLang().lang;
+  var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
   var t    = useLang().t;
   var st   = calcStandings(p.preds || {}, p.group);
   var done = groupDone(p.preds || {}, p.group);
@@ -104,12 +105,12 @@ function StandingsTable(p) {
     ? qualifiedThirds.indexOf(third) >= 0
     : null; // null = unknown (not enough groups filled)
 
-  return html`<div style=${{ marginTop:12, padding:"10px 12px", background:"rgba(255,255,255,.03)", borderRadius:12, border:"1px solid rgba(255,255,255,.07)" }}>
+  return html`<div style=${{ marginTop:12, padding:"10px 12px", background:thm.inv(.03), borderRadius:12, border:thm.bdr(1,.07) }}>
     <div style=${{ display:"flex", justifyContent:"space-between", marginBottom:7 }}>
-      <span style=${{ fontSize:10, fontWeight:700, color:"rgba(255,255,255,.3)", letterSpacing:".08em" }}>${t.standingsLabel} ${p.group}</span>
-      <span style=${{ fontSize:10, color: done ? "rgba(74,222,128,.7)" : "rgba(245,158,11,.6)" }}>${done ? "\u2713 " + t.qualifyDirect : "* projected"}</span>
+      <span style=${{ fontSize:10, fontWeight:700, color:thm.inv(.3), letterSpacing:".08em" }}>${t.standingsLabel} ${p.group}</span>
+      <span style=${{ fontSize:10, color: done ? "rgba(74,222,128,.7)" : thm.a(.6) }}>${done ? "\u2713 " + t.qualifyDirect : "* projected"}</span>
     </div>
-    <div style=${{ display:"grid", gridTemplateColumns:"14px 1fr 22px 22px 22px 22px 42px 26px 28px", gap:2, fontSize:10, color:"rgba(255,255,255,.25)", marginBottom:4, padding:"0 2px" }}>
+    <div style=${{ display:"grid", gridTemplateColumns:"14px 1fr 22px 22px 22px 22px 42px 26px 28px", gap:2, fontSize:10, color:thm.inv(.25), marginBottom:4, padding:"0 2px" }}>
       <span/><span/>
       <span style=${{ textAlign:"center" }}>P</span>
       <span style=${{ textAlign:"center" }}>W</span>
@@ -132,34 +133,34 @@ function StandingsTable(p) {
 
       var bg  = isTop2    ? "rgba(74,222,128,.07)"  :
                 thirdIn   ? "rgba(74,222,128,.07)"  :
-                thirdMaybe? "rgba(245,158,11,.05)"  :
+                thirdMaybe? thm.a(.05)  :
                 thirdOut  ? "rgba(255,100,100,.04)" : "transparent";
       var bd  = isTop2    ? "1px solid rgba(74,222,128,.1)"   :
                 thirdIn   ? "1px solid rgba(74,222,128,.1)"   :
-                thirdMaybe? "1px solid rgba(245,158,11,.08)"  :
+                thirdMaybe? thm.bdra(1,.08)  :
                 thirdOut  ? "1px solid rgba(255,100,100,.1)"  : "1px solid transparent";
-      var nameCol = isTop2||thirdIn ? "rgba(255,255,255,.85)" :
-                   thirdMaybe       ? "rgba(255,255,255,.55)" : "rgba(255,255,255,.3)";
+      var nameCol = isTop2||thirdIn ? thm.inv(.85) :
+                   thirdMaybe       ? thm.inv(.55) : thm.inv(.3);
       var ptsCol  = isTop2||thirdIn ? "#4ade80"    :
-                   thirdMaybe       ? "#fbbf24"    :
-                   thirdOut         ? "#f87171"    : "rgba(255,255,255,.3)";
+                   thirdMaybe       ? thm.accent    :
+                   thirdOut         ? "#f87171"    : thm.inv(.3);
 
       return html`<div key=${r.team} style=${{
         display:"grid", gridTemplateColumns:"14px 1fr 22px 22px 22px 22px 42px 26px 28px",
         gap:2, padding:"3px 2px", borderRadius:6, marginBottom:2,
         background:bg, border:bd
       }}>
-        <span style=${{ fontSize:9, color:"rgba(255,255,255,.28)", alignSelf:"center" }}>${i+1}</span>
+        <span style=${{ fontSize:9, color:thm.inv(.28), alignSelf:"center" }}>${i+1}</span>
         <span style=${{ fontSize:11, fontWeight:i<2?600:400, color:nameCol, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", display:"flex", alignItems:"center", gap:4 }}><${FlagImg} team=${r.team}/> ${teamName(r.team,lang)}</span>
         ${[r.mp, r.w, r.d, r.l].map(function(v, k) {
-          return html`<span key=${k} style=${{ textAlign:"center", color:"rgba(255,255,255,.35)", fontSize:11 }}>${v}</span>`;
+          return html`<span key=${k} style=${{ textAlign:"center", color:thm.inv(.35), fontSize:11 }}>${v}</span>`;
         })}
-        <span style=${{ textAlign:"center", color:"rgba(255,255,255,.35)", fontSize:11 }}>${r.gf}:${r.ga}</span>
-        <span style=${{ textAlign:"center", fontSize:11, color: r.gd>0?"#4ade80":r.gd<0?"#f87171":"rgba(255,255,255,.35)" }}>${r.gd > 0 ? "+" : ""}${r.gd}</span>
+        <span style=${{ textAlign:"center", color:thm.inv(.35), fontSize:11 }}>${r.gf}:${r.ga}</span>
+        <span style=${{ textAlign:"center", fontSize:11, color: r.gd>0?"#4ade80":r.gd<0?"#f87171":thm.inv(.35) }}>${r.gd > 0 ? "+" : ""}${r.gd}</span>
         <span style=${{ textAlign:"center", fontWeight:700, fontSize:12, color:ptsCol }}>${r.pts}</span>
       </div>`;
     })}
-    <div style=${{ marginTop:5, fontSize:9, color:"rgba(255,255,255,.2)" }}>
+    <div style=${{ marginTop:5, fontSize:9, color:thm.inv(.2) }}>
       \ud83d\udfe2 Top 2 qualify \u00b7
       \ud83d\udfe1 Best 8 third-place qualify \u00b7
       \ud83d\udd34 3rd place eliminated
@@ -174,9 +175,9 @@ function GroupTabs(p) {
       var done = groupDone(p.isResult ? (p.preds && p.preds.groups || {}) : (p.preds || {}), g);
       return html`<button key=${g} onClick=${function(){ p.onChange(g); }} style=${{
         padding:"4px 9px", borderRadius:7, fontSize:12, fontWeight:700, cursor:"pointer",
-        border: "1.5px solid " + (p.active===g ? "#f59e0b" : done ? "rgba(74,222,128,.3)" : "rgba(255,255,255,.1)"),
-        background: p.active===g ? "#f59e0b" : done ? "rgba(74,222,128,.08)" : "transparent",
-        color: p.active===g ? "#000" : done ? "#4ade80" : "rgba(255,255,255,.5)",
+        border: "1.5px solid " + (p.active===g ? thm.accent : done ? "rgba(74,222,128,.3)" : thm.inv(.1)),
+        background: p.active===g ? thm.accent : done ? "rgba(74,222,128,.08)" : "transparent",
+        color: p.active===g ? "#000" : done ? "#4ade80" : thm.inv(.5),
         fontFamily:"'DM Sans',sans-serif"
       }}>${g}${done && p.active !== g ? " \u2713" : ""}</button>`;
     })}
@@ -185,7 +186,7 @@ function GroupTabs(p) {
 
 // - Multi-team chip picker -
 function MultiPick(p) {
-  var lang=useLang().lang;
+  var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
   var t = useLang().t;
   var options = p.options, selected = p.selected, pick = p.pick, results = p.results;
   var hasR = results && results.length > 0;
@@ -204,15 +205,15 @@ function MultiPick(p) {
 
   return html`<div>
     <div style=${{ display:"flex", justifyContent:"space-between", marginBottom:12 }}>
-      <span style=${{ fontSize:13, color:"rgba(255,255,255,.4)" }}>${t.select} ${pick} ${t.teams}</span>
-      <span style=${{ fontSize:13, fontWeight:700, color: selected.length===pick ? "#4ade80" : selected.length>0 ? "#f59e0b" : "rgba(255,255,255,.3)" }}>
+      <span style=${{ fontSize:13, color:thm.inv(.4) }}>${t.select} ${pick} ${t.teams}</span>
+      <span style=${{ fontSize:13, fontWeight:700, color: selected.length===pick ? "#4ade80" : selected.length>0 ? thm.accent : thm.inv(.3) }}>
         ${selected.length}/${pick}${selected.length === pick ? " \u2713" : ""}
       </span>
     </div>
     ${Object.entries(grouped).map(function(kv) {
       var g = kv[0], ts = kv[1];
       return html`<div key=${g} style=${{ marginBottom:10 }}>
-        <div style=${{ fontSize:10, fontWeight:700, color:"rgba(255,255,255,.22)", marginBottom:5, letterSpacing:".08em" }}>GROUP ${g}</div>
+        <div style=${{ fontSize:10, fontWeight:700, color:thm.inv(.22), marginBottom:5, letterSpacing:".08em" }}>GROUP ${g}</div>
         <div style=${{ display:"flex", flexWrap:"wrap", gap:5 }}>
           ${ts.map(function(team) {
             var isOn = selected.indexOf(team) >= 0;
@@ -227,7 +228,7 @@ function MultiPick(p) {
 
 // - Single-team chip picker -
 function SinglePick(p) {
-  var lang=useLang().lang;
+  var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
   var options = p.options, selected = p.selected, results = p.results;
   var hasR = results !== undefined && results !== "";
 
@@ -241,7 +242,7 @@ function SinglePick(p) {
     ${Object.entries(grouped).map(function(kv) {
       var g = kv[0], ts = kv[1];
       return html`<div key=${g} style=${{ marginBottom:10 }}>
-        <div style=${{ fontSize:10, fontWeight:700, color:"rgba(255,255,255,.22)", marginBottom:5, letterSpacing:".08em" }}>GROUP ${g}</div>
+        <div style=${{ fontSize:10, fontWeight:700, color:thm.inv(.22), marginBottom:5, letterSpacing:".08em" }}>GROUP ${g}</div>
         <div style=${{ display:"flex", flexWrap:"wrap", gap:5 }}>
           ${ts.map(function(team) {
             var isOn = selected === team;
@@ -261,6 +262,7 @@ function SinglePick(p) {
 // - KO Match Row (score entry for knockout matches) -
 function KOMatchRow(p) {
   var lctx=useLang(); var t=lctx.t; var lang=lctx.lang;
+  var thm=lctx.thm||THEMES.dark;
   var match=p.match; // { id, home, away, score, winner, loser }
   var sc=p.sc||{}; // current prediction score object { h, a, winner }
   var onChange=p.onChange;
@@ -279,8 +281,8 @@ function KOMatchRow(p) {
     status=(predictedWinner===actualWinner)?'correct':'wrong';
   }
 
-  var borderCol = status==='correct'?'rgba(74,222,128,.4)':status==='wrong'?'rgba(248,113,113,.3)':'rgba(255,255,255,.1)';
-  var bgCol     = status==='correct'?'rgba(74,222,128,.06)':status==='wrong'?'rgba(248,113,113,.04)':'rgba(255,255,255,.04)';
+  var borderCol = status==='correct'?'rgba(74,222,128,.4)':status==='wrong'?'rgba(248,113,113,.3)':thm.inv(.1);
+  var bgCol     = status==='correct'?'rgba(74,222,128,.06)':status==='wrong'?'rgba(248,113,113,.04)':thm.inv(.04);
 
   function setH(v){ onChange(Object.assign({},sc,{h:v.replace(/\D/g,'').slice(0,2)})); }
   function setA(v){ onChange(Object.assign({},sc,{a:v.replace(/\D/g,'').slice(0,2)})); }
@@ -294,17 +296,17 @@ function KOMatchRow(p) {
     <div style=${{flex:1,display:'flex',alignItems:'center',justifyContent:'flex-end',gap:5,overflow:'hidden'}}>
       ${homeTeam
         ? html`<span style=${{fontSize:11,fontWeight:predictedWinner===homeTeam?600:400,
-            color:predictedWinner===homeTeam?'rgba(255,255,255,.9)':'rgba(255,255,255,.65)',
+            color:predictedWinner===homeTeam?thm.inv(.9):thm.inv(.65),
             overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${teamName(homeTeam,lang)}</span>
            <${FlagImg} team=${homeTeam}/>`
-        : html`<span style=${{fontSize:10,color:'rgba(255,255,255,.25)',fontStyle:'italic'}}>TBD</span>`
+        : html`<span style=${{fontSize:10,color:thm.inv(.25),fontStyle:'italic'}}>TBD</span>`
       }
     </div>
 
     <div style=${{display:'flex',alignItems:'center',gap:3,flexShrink:0}}>
       <input type="number" min="0" max="20" className="si" value=${h}
         onChange=${function(e){setH(e.target.value);}} placeholder="?"/>
-      <span style=${{color:'rgba(255,255,255,.2)',fontSize:10}}>-</span>
+      <span style=${{color:thm.inv(.2),fontSize:10}}>-</span>
       <input type="number" min="0" max="20" className="si" value=${a}
         onChange=${function(e){setA(e.target.value);}} placeholder="?"/>
     </div>
@@ -313,25 +315,25 @@ function KOMatchRow(p) {
       ${awayTeam
         ? html`<${FlagImg} team=${awayTeam}/>
            <span style=${{fontSize:11,fontWeight:predictedWinner===awayTeam?600:400,
-            color:predictedWinner===awayTeam?'rgba(255,255,255,.9)':'rgba(255,255,255,.65)',
+            color:predictedWinner===awayTeam?thm.inv(.9):thm.inv(.65),
             overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${teamName(awayTeam,lang)}</span>`
-        : html`<span style=${{fontSize:10,color:'rgba(255,255,255,.25)',fontStyle:'italic'}}>TBD</span>`
+        : html`<span style=${{fontSize:10,color:thm.inv(.25),fontStyle:'italic'}}>TBD</span>`
       }
     </div>
 
     ${isDraw&&homeTeam&&awayTeam&&html`<div style=${{display:'flex',gap:3,flexShrink:0}}>
       <button onClick=${function(){setW('home');}} style=${{
         padding:'2px 7px',borderRadius:5,fontSize:9,fontWeight:700,cursor:'pointer',
-        border:'1px solid '+(sc.winner==='home'?'rgba(74,222,128,.6)':'rgba(255,255,255,.15)'),
+        border:'1px solid '+(sc.winner==='home'?'rgba(74,222,128,.6)':thm.inv(.15)),
         background:sc.winner==='home'?'rgba(74,222,128,.15)':'transparent',
-        color:sc.winner==='home'?'#4ade80':'rgba(255,255,255,.4)',
+        color:sc.winner==='home'?'#4ade80':thm.inv(.4),
         fontFamily:"'DM Sans',sans-serif"
       }}>H</button>
       <button onClick=${function(){setW('away');}} style=${{
         padding:'2px 7px',borderRadius:5,fontSize:9,fontWeight:700,cursor:'pointer',
-        border:'1px solid '+(sc.winner==='away'?'rgba(74,222,128,.6)':'rgba(255,255,255,.15)'),
+        border:'1px solid '+(sc.winner==='away'?'rgba(74,222,128,.6)':thm.inv(.15)),
         background:sc.winner==='away'?'rgba(74,222,128,.15)':'transparent',
-        color:sc.winner==='away'?'#4ade80':'rgba(255,255,255,.4)',
+        color:sc.winner==='away'?'#4ade80':thm.inv(.4),
         fontFamily:"'DM Sans',sans-serif"
       }}>A</button>
     </div>`}
@@ -340,7 +342,7 @@ function KOMatchRow(p) {
 
 
 function BCol(p) {
-  var lang=useLang().lang;
+  var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
   var teams=p.teams, next=p.next||[], H=p.H, PW=p.PW, PH=p.PH, scores=p.scores||{};
   var n=teams.length;
   var slotH=H/n;
@@ -356,19 +358,19 @@ function BCol(p) {
       return html`<div key=${i} style=${{
         position:'absolute',top:top+'px',left:0,right:0,height:PH+'px',
         display:'flex',alignItems:'center',gap:3,padding:'0 4px',borderRadius:5,
-        background:a?'rgba(74,222,128,.12)':e?'rgba(255,255,255,.02)':'rgba(255,255,255,.06)',
-        border:'1px solid '+(a?'rgba(74,222,128,.35)':e?'rgba(255,255,255,.07)':'rgba(255,255,255,.12)'),
+        background:a?'rgba(74,222,128,.12)':e?thm.inv(.02):thm.inv(.06),
+        border:'1px solid '+(a?'rgba(74,222,128,.35)':e?thm.inv(.07):thm.inv(.12)),
       }}>
         ${team
           ? html`
             <${FlagImg} team=${team} dim=${e}/>
             <span style=${{fontSize:8,fontWeight:a?600:400,flex:1,minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginLeft:2,
-              color:a?'#4ade80':e?'rgba(255,255,255,.35)':'rgba(255,255,255,.75)'}}>${teamName(team,lang)}</span>
-            ${score&&html`<span style=${{flexShrink:0,fontSize:8,fontWeight:800,background:'rgba(245,158,11,.3)',
-              border:'1px solid rgba(245,158,11,.6)',borderRadius:3,padding:'0 3px',
+              color:a?'#4ade80':e?thm.inv(.35):thm.inv(.75)}}>${teamName(team,lang)}</span>
+            ${score&&html`<span style=${{flexShrink:0,fontSize:8,fontWeight:800,background:thm.a(.3),
+              border:thm.bdra(1,.6),borderRadius:3,padding:'0 3px',
               color:'#fde68a',whiteSpace:'nowrap'}}>${score}</span>`}
           `
-          : html`<span style=${{fontSize:8,color:'rgba(255,255,255,.18)',fontStyle:'italic',flex:1}}>TBD</span>`
+          : html`<span style=${{fontSize:8,color:thm.inv(.18),fontStyle:'italic',flex:1}}>TBD</span>`
         }
       </div>`;
     })}
@@ -378,7 +380,7 @@ function BCol(p) {
 // - Bracket connector SVG -
 function BConn(p) {
   var outer=p.outer,inner=p.inner,dir=p.dir,H=p.H,CW=p.CW;
-  var stk='rgba(255,255,255,.15)';
+  var stk=thm.inv(.15);
   function ctrO(i){return(i+0.5)*H/outer.length;}
   function ctrI(i){return(i+0.5)*H/inner.length;}
   return html`<svg style=${{width:CW+'px',height:H+'px',flexShrink:0,display:'block',overflow:'visible'}}
@@ -398,7 +400,7 @@ function BConn(p) {
 }
 
 function BFinalConn(p) {
-  var H=p.H,CW=p.CW,dir=p.dir,stk='rgba(255,255,255,.15)';
+  var H=p.H,CW=p.CW,dir=p.dir,stk=thm.inv(.15);
   var c1=H/4,c2=3*H/4,mid=H/2;
   return html`<svg style=${{width:CW+'px',height:H+'px',flexShrink:0,display:'block'}} viewBox=${'0 0 '+CW+' '+H}>
     ${dir==='lr'
@@ -413,8 +415,9 @@ function BFinalConn(p) {
 // - Full mirrored bracket (driven by cascadeKO) -
 function BracketView(p) {
   var lctx=useLang(); var t=lctx.t; var lang=lctx.lang;
+  var thm=lctx.thm||THEMES.dark;
   var preds=p.preds;
-  if(!preds) return html`<div style=${{textAlign:'center',padding:'60px 20px',color:'rgba(255,255,255,.3)'}}>${t.bracketNoPreds}</div>`;
+  if(!preds) return html`<div style=${{textAlign:'center',padding:'60px 20px',color:thm.inv(.3)}}>${t.bracketNoPreds}</div>`;
 
   var C = useMemo(function(){
     return cascadeKO(preds.groups, preds.ko||{});
@@ -532,7 +535,7 @@ function BracketView(p) {
           return html`<div key=${i} style=${{
             width:col.w+'px',flexShrink:0,textAlign:'center',
             fontSize:9,fontWeight:700,
-            color:'rgba(255,255,255,.35)',letterSpacing:'.05em',
+            color:thm.inv(.35),letterSpacing:'.05em',
             whiteSpace:'nowrap',overflow:'hidden'
           }}>${col.label}</div>`;
         })}
@@ -552,24 +555,24 @@ function BracketView(p) {
         <div style=${{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
           height:H+'px',width:'170px',flexShrink:0,padding:'0 8px'}}>
           <div style=${{padding:'8px 10px',borderRadius:10,textAlign:'center',width:'100%',marginBottom:4,
-            background:ch?'rgba(245,158,11,.15)':'rgba(255,255,255,.04)',
-            border:'2px solid '+(ch?'rgba(245,158,11,.5)':'rgba(255,255,255,.1)')}}>
+            background:ch?thm.a(.15):thm.inv(.04),
+            border:(ch?thm.bdra(2,.5):thm.bdr(2,.1))}}>
             ${ch
               ? html`<${FlagImg} team=${ch}/><div style=${{fontWeight:700,color:'#fbbf24',fontSize:12,marginTop:3}}>${teamName(ch,lang)}</div>`
-              : html`<div style=${{fontSize:9,color:'rgba(255,255,255,.25)',fontStyle:'italic',padding:'4px 0'}}>TBD</div>`}
+              : html`<div style=${{fontSize:9,color:thm.inv(.25),fontStyle:'italic',padding:'4px 0'}}>TBD</div>`}
           </div>       
 
           ${C.final&&C.final.score&&html`<div style=${{display:'flex',alignItems:'center',gap:4,
-            background:'rgba(245,158,11,.14)',border:'1px solid rgba(245,158,11,.3)',
+            background:thm.a(.14),border:thm.bdra(1,.3),
             borderRadius:6,padding:'3px 10px',marginBottom:8,width:'100%',justifyContent:'center'}}>
             ${(function(){
               var champIsHome = C.final.home === ch;
               var cs = champIsHome ? C.final.score.h : C.final.score.a;
               var rs = champIsHome ? C.final.score.a : C.final.score.h;
               return html`
-                <span style=${{fontSize:9,color:'rgba(255,255,255,.5)'}}>${ch?teamName(ch,lang):'?'}</span>
+                <span style=${{fontSize:9,color:thm.inv(.5)}}>${ch?teamName(ch,lang):'?'}</span>
                 <span style=${{fontWeight:800,fontSize:14,color:'#fbbf24',letterSpacing:2}}>${cs}-${rs}</span>
-                <span style=${{fontSize:9,color:'rgba(255,255,255,.5)'}}>${ru?teamName(ru,lang):'?'}</span>
+                <span style=${{fontSize:9,color:thm.inv(.5)}}>${ru?teamName(ru,lang):'?'}</span>
               `;
             })()}
           </div>`}
@@ -579,11 +582,11 @@ function BracketView(p) {
             ${thirds.slice(0,2).filter(Boolean).map(function(t3){
               var isW=t3===thirdWin;
               return html`<div key=${t3} style=${{display:'flex',alignItems:'center',gap:5,padding:'3px 6px',borderRadius:5,marginBottom:3,
-                background:isW?'rgba(180,83,9,.15)':'rgba(255,255,255,.04)',
-                border:'1px solid '+(isW?'rgba(180,83,9,.4)':'rgba(255,255,255,.08)')}}>
+                background:isW?'rgba(180,83,9,.15)':thm.inv(.04),
+                border:'1px solid '+(isW?'rgba(180,83,9,.4)':thm.inv(.08))}}>
                 <${FlagImg} team=${t3}/>
                 <span style=${{fontSize:9,flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',
-                  color:isW?'#fb923c':'rgba(255,255,255,.5)'}}>${teamName(t3,lang)}</span>
+                  color:isW?'#fb923c':thm.inv(.5)}}>${teamName(t3,lang)}</span>
                 ${isW&&html`<span style=${{fontSize:8,color:'#fb923c'}}>-</span>`}
               </div>`;
             })}
@@ -601,7 +604,7 @@ function BracketView(p) {
 
       </div>
     </div>
-    <p style=${{fontSize:10,color:'rgba(255,255,255,.22)',marginTop:6,textAlign:'center'}}>${t.bracketSub}</p>
+    <p style=${{fontSize:10,color:thm.inv(.22),marginTop:6,textAlign:'center'}}>${t.bracketSub}</p>
   </div>`;
 }
 
@@ -643,33 +646,33 @@ function BracketScoreTable(p) {
   var hasAny=rounds.some(function(r){return r.rows.length>0;});
   if(!hasAny) return null;
 
-  return html`<div style=${{marginTop:20,borderTop:'1px solid rgba(255,255,255,.07)',paddingTop:16}}>
-    <div style=${{fontSize:12,fontWeight:700,color:'rgba(255,255,255,.4)',marginBottom:12}}>
+  return html`<div style=${{marginTop:20,borderTop:thm.bdr(1,.07),paddingTop:16}}>
+    <div style=${{fontSize:12,fontWeight:700,color:thm.inv(.4),marginBottom:12}}>
       Predicted scores
     </div>
     ${rounds.filter(function(r){return r.rows.length>0;}).map(function(rd){
       return html`<div key=${rd.label} style=${{marginBottom:14}}>
-        <div style=${{fontSize:10,fontWeight:700,color:'rgba(255,255,255,.3)',marginBottom:6,textTransform:'uppercase',letterSpacing:'.06em'}}>${rd.label}</div>
+        <div style=${{fontSize:10,fontWeight:700,color:thm.inv(.3),marginBottom:6,textTransform:'uppercase',letterSpacing:'.06em'}}>${rd.label}</div>
         <div style=${{display:'flex',flexDirection:'column',gap:4}}>
           ${rd.rows.map(function(m){
             var hw=m.winner===m.home, aw=m.winner===m.away;
             return html`<div key=${m.id} style=${{
               display:'grid',gridTemplateColumns:'1fr auto 1fr',alignItems:'center',gap:8,
-              background:'rgba(255,255,255,.04)',border:'1px solid rgba(255,255,255,.07)',
+              background:thm.inv(.04),border:thm.bdr(1,.07),
               borderRadius:8,padding:'6px 12px'
             }}>
               <div style=${{display:'flex',alignItems:'center',justifyContent:'flex-end',gap:5,overflow:'hidden'}}>
-                <span style=${{fontSize:11,fontWeight:hw?600:400,color:hw?'rgba(255,255,255,.9)':'rgba(255,255,255,.45)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${m.home?teamName(m.home,lang):'TBD'}</span>
+                <span style=${{fontSize:11,fontWeight:hw?600:400,color:hw?thm.inv(.9):thm.inv(.45),overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${m.home?teamName(m.home,lang):'TBD'}</span>
                 ${m.home&&html`<${FlagImg} team=${m.home} dim=${!hw}/>`}
               </div>
               <div style=${{display:'flex',alignItems:'center',gap:4,flexShrink:0}}>
-                <span style=${{fontWeight:800,fontSize:15,minWidth:14,textAlign:'right',color:hw?'#fbbf24':'rgba(255,255,255,.5)'}}>${m.h}</span>
-                <span style=${{color:'rgba(255,255,255,.2)',fontSize:11}}>-</span>
-                <span style=${{fontWeight:800,fontSize:15,minWidth:14,textAlign:'left',color:aw?'#fbbf24':'rgba(255,255,255,.5)'}}>${m.a}</span>
+                <span style=${{fontWeight:800,fontSize:15,minWidth:14,textAlign:'right',color:hw?'#fbbf24':thm.inv(.5)}}>${m.h}</span>
+                <span style=${{color:thm.inv(.2),fontSize:11}}>-</span>
+                <span style=${{fontWeight:800,fontSize:15,minWidth:14,textAlign:'left',color:aw?'#fbbf24':thm.inv(.5)}}>${m.a}</span>
               </div>
               <div style=${{display:'flex',alignItems:'center',gap:5,overflow:'hidden'}}>
                 ${m.away&&html`<${FlagImg} team=${m.away} dim=${!aw}/>`}
-                <span style=${{fontSize:11,fontWeight:aw?600:400,color:aw?'rgba(255,255,255,.9)':'rgba(255,255,255,.45)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${m.away?teamName(m.away,lang):'TBD'}</span>
+                <span style=${{fontSize:11,fontWeight:aw?600:400,color:aw?thm.inv(.9):thm.inv(.45),overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${m.away?teamName(m.away,lang):'TBD'}</span>
               </div>
             </div>`;
           })}

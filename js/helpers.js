@@ -24,7 +24,7 @@ function genPDF(preds, name, email, titleStr) {
     doc.setFillColor(245, 158, 11);
     doc.rect(0, 0, W, 28, "F");
     doc.setFontSize(16); doc.setFont("helvetica", "bold"); doc.setTextColor(0, 0, 0);
-    doc.text("\u26bd  " + titleStr, M, 16);
+    doc.text("\u26bd\ufe0e  " + titleStr, M, 16);
     doc.setFontSize(9);
     doc.text(name + " \u00b7 " + email + " \u00b7 " + new Date().toLocaleDateString(), M, 24);
     y = 38;

@@ -5,9 +5,11 @@ function App() {
   var rState     = useState(Object.assign({}, ER)); var results  = rState[0], setR = rState[1];
   var sState     = useState(Object.assign({}, DEF)); var settings = sState[0], setS = sState[1];
   var readyState = useState(false);     var ready = readyState[0], setReady = readyState[1];
-  var langState  = useState("es"); // locked to Spanish      
+  var langState  = useState("es"); // locked to Spanish
   var lang  = langState[0],  setLangRaw = langState[1];
   var dbStatusState = useState("local"); var dbStatus = dbStatusState[0], setDbStatus = dbStatusState[1];
+  var themeState = useState(function(){ try{ return localStorage.getItem('wc26_theme')||'dark'; }catch(e){ return 'dark'; } });
+  var theme = themeState[0], setThemeRaw = themeState[1];
 
   // ── Load persisted data on mount ─────────────────────────────────
   useEffect(function(){
@@ -88,6 +90,11 @@ function App() {
     return async function(data) { setter(data); await db.set(key, data); };
   }
   async function setLang(l) { setLangRaw("es"); } // locked to Spanish
+  function setTheme(t) {
+    setThemeRaw(t);
+    try { localStorage.setItem('wc26_theme', t); } catch(e){}
+    document.body.dataset.theme = t;
+  }
 
   // ── Re-wire Firebase when settings change ────────────────────────
   async function saveSettings(newS) {
@@ -102,15 +109,19 @@ function App() {
     }
   }
 
-  // ── Loading screen ────────────────────────────────────────────────
-  if (!ready) return html`<div style=${{
-    minHeight:"100vh", background:"#080f1c", display:"flex",
-    alignItems:"center", justifyContent:"center",
-    fontFamily:"'DM Sans',sans-serif", color:"rgba(245,158,11,.4)",
-    fontSize:18, letterSpacing:".1em"
-  }}>&#x26BD; LOADING...</div>`;
+  // Apply theme on mount
+  useEffect(function(){ document.body.dataset.theme = theme; }, [theme]);
 
-  var lCtx = { lang: lang, t: T[lang], setLang: setLang };
+  // ── Loading screen ────────────────────────────────────────────────
+  var thm = THEMES[theme] || THEMES.dark;
+  if (!ready) return html`<div style=${{
+    minHeight:"100vh", background:thm.loadBg, display:"flex",
+    alignItems:"center", justifyContent:"center",
+    fontFamily:"'DM Sans',sans-serif", color:thm.loadColor,
+    fontSize:18, letterSpacing:".1em"
+  }}>\u26BD\uFE0E CARGANDO...</div>`;
+
+  var lCtx = { lang: lang, t: T[lang], setLang: setLang, thm: THEMES[theme]||THEMES.dark, setTheme: setTheme };
 
   return html`<${LangCtx.Provider} value=${lCtx}>
     <div style=${{ minHeight:"100vh" }}>

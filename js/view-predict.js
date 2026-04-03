@@ -1,6 +1,7 @@
 // - Prediction form -
 function PredictView(p) {
   var lctx=useLang(); var t=lctx.t; var lang=lctx.lang;
+  var thm=lctx.thm||THEMES.dark;
   var participants=p.participants, saveP=p.saveP, setView=p.setView, settings=p.settings;
 
   var s0=useState(0);     var step=s0[0],    setStep=s0[1];
@@ -29,7 +30,7 @@ function PredictView(p) {
   if (isPastDeadline) return html`<div class="fade" style=${{maxWidth:440,margin:"0 auto",padding:"80px 16px",textAlign:"center"}}>
     <div style=${{fontSize:52,marginBottom:12}}>\ud83d\udd12</div>
     <h2 class="bb" style=${{fontSize:32,marginBottom:12}}>${lang==="es"?"PREDICCIONES CERRADAS":"PREDICTIONS CLOSED"}</h2>
-    <p style=${{color:"rgba(255,255,255,.4)",fontSize:14,lineHeight:1.8}}>
+    <p style=${{color:thm.inv(.4),fontSize:14,lineHeight:1.8}}>
       ${lang==="es"?"El plazo de registro cerr\u00f3 el":"The registration deadline was"}
       ${deadline.toLocaleDateString(lang==="es"?"es-CO":"en-CO",{day:"numeric",month:"long",year:"numeric"})}.<br/>
       ${lang==="es"?"Ya no es posible registrar o modificar predicciones.":"No new predictions can be registered or modified."}
@@ -135,7 +136,7 @@ function PredictView(p) {
     <div style=${{textAlign:"center",margin:"20px 0 26px"}}>
       <div style=${{fontSize:40,marginBottom:8}}>${needsPin?"\ud83d\udd11":"\ud83d\udccb"}</div>
       <h2 class="bb" style=${{fontSize:34}}>${t.registerPreds}</h2>
-      <p style=${{color:"rgba(255,255,255,.4)",fontSize:13,marginTop:6}}>${t.regSub}</p>
+      <p style=${{color:thm.inv(.4),fontSize:13,marginTop:6}}>${t.regSub}</p>
     </div>
     <${Card}>
       ${needsPin&&html`<${Field} label=${lang==="es"?"PIN de acceso":"Access PIN"}>
@@ -154,11 +155,11 @@ function PredictView(p) {
           onInput=${function(e){setEmail(e.target.value);}}
           onKeyDown=${function(e){if(e.key==="Enter")handleStart();}}
           placeholder=${t.emailPh}/></${Field}>
-        <p style=${{fontSize:11,color:"rgba(255,255,255,.3)",marginBottom:14}}>${t.sameEmail}</p>
+        <p style=${{fontSize:11,color:thm.inv(.3),marginBottom:14}}>${t.sameEmail}</p>
       `}
       ${needsPin&&html`<div style=${{marginBottom:14,padding:"10px 12px",borderRadius:10,
-        background:"rgba(245,158,11,.07)",border:"1px solid rgba(245,158,11,.2)",fontSize:12,
-        color:"rgba(245,158,11,.8)",lineHeight:1.7}}>
+        background:thm.a(.07),border:thm.bdra(1,.2),fontSize:12,
+        color:thm.a(.8),lineHeight:1.7}}>
         ${lang==="es"
           ? "\ud83d\udcb0 Debes haber transferido la cuota de inscripci\u00f3n antes de recibir tu PIN. Contacta al organizador."
           : "\ud83d\udcb0 You must have paid the entry fee before receiving your PIN. Contact the organiser."}
@@ -173,14 +174,14 @@ function PredictView(p) {
   if(step===2) return html`<div class="fade" style=${{maxWidth:440,margin:"0 auto",padding:"60px 16px",textAlign:"center"}}>
     <div style=${{fontSize:56,marginBottom:12}}>\ud83c\udf89</div>
     <h2 class="bb" style=${{fontSize:38}}>${name.toUpperCase()}!</h2>
-    <p style=${{color:"rgba(255,255,255,.5)",margin:"14px 0 20px",lineHeight:1.8}}>
+    <p style=${{color:thm.inv(.5),margin:"14px 0 20px",lineHeight:1.8}}>
       ${t.savedMsg}${existId?" "+t.updated:""}<br/>${t.goodluck}
     </p>
     ${adminNotif==="sent"&&html`<div style=${{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(74,222,128,.1)",border:"1px solid rgba(74,222,128,.3)",borderRadius:10,padding:"7px 14px",fontSize:12,color:"#4ade80",marginBottom:16}}>${t.adminNotifSent}</div>`}
     ${adminNotif==="fail"&&html`<div style=${{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(248,113,113,.1)",border:"1px solid rgba(248,113,113,.3)",borderRadius:10,padding:"7px 14px",fontSize:12,color:"#f87171",marginBottom:16}}>${t.adminNotifFail}</div>`}
 
-    <div style=${{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.08)",borderRadius:14,padding:"16px",marginBottom:20}}>
-      <div style=${{fontSize:12,fontWeight:700,color:"rgba(255,255,255,.4)",marginBottom:12,letterSpacing:".06em"}}>
+    <div style=${{background:thm.inv(.04),border:thm.bdr(1,.08),borderRadius:14,padding:"16px",marginBottom:20}}>
+      <div style=${{fontSize:12,fontWeight:700,color:thm.inv(.4),marginBottom:12,letterSpacing:".06em"}}>
         ${lang==="es"?"\ud83d\udcbe GUARDAR COPIA DE MIS PREDICCIONES":"\ud83d\udcbe SAVE A COPY OF MY PREDICTIONS"}
       </div>
       <div style=${{display:"flex",flexDirection:"column",gap:8}}>
@@ -216,7 +217,7 @@ function PredictView(p) {
       <${Btn} v="secondary" onClick=${function(){setStep(0);}} sx=${{padding:"7px 14px",fontSize:13}}>${t.back}</${Btn}>
       <div style=${{flex:1}}>
         <${PBar} v=${gFilled+koFilled*3} max=${72+koTotal*3}/>
-        <div style=${{fontSize:11,color:"rgba(255,255,255,.3)",marginTop:3}}>${gFilled}/72 ${t.groupStage} - ${koFilled}/${koTotal} ${t.knockout}</div>
+        <div style=${{fontSize:11,color:thm.inv(.3),marginTop:3}}>${gFilled}/72 ${t.groupStage} - ${koFilled}/${koTotal} ${t.knockout}</div>
       </div>
     </div>
 
@@ -227,25 +228,25 @@ function PredictView(p) {
       ].map(function(s){
         return html`<button key=${s.id} onClick=${function(){setSection(s.id);}} style=${{
           flex:1,padding:"12px 16px",borderRadius:12,cursor:"pointer",
-          border:"2px solid "+(section===s.id?"#f59e0b":"rgba(255,255,255,.1)"),
-          background:section===s.id?"rgba(245,158,11,.12)":"rgba(255,255,255,.03)",
+          border:"2px solid "+(section===s.id?thm.accent:thm.inv(.1)),
+          background:section===s.id?thm.a(.12):thm.inv(.03),
           fontFamily:"'DM Sans',sans-serif",transition:"all .15s",textAlign:"left"
         }}>
-          <div style=${{fontWeight:700,fontSize:14,color:section===s.id?"#fbbf24":"rgba(255,255,255,.7)"}}>${s.l}</div>
-          <div style=${{fontSize:12,marginTop:2,color:section===s.id?"rgba(245,158,11,.7)":"rgba(255,255,255,.4)"}}>${s.sub}</div>
+          <div style=${{fontWeight:700,fontSize:14,color:section===s.id?thm.accent:thm.inv(.7)}}>${s.l}</div>
+          <div style=${{fontSize:12,marginTop:2,color:section===s.id?thm.a(.7):thm.inv(.4)}}>${s.sub}</div>
         </button>`;
       })}
     </div>
 
     ${section==="groups"&&html`<${Card}>
       <${GroupTabs} active=${activeG} onChange=${setActiveG} preds=${preds.groups}/>
-      <div style=${{fontSize:11,color:"rgba(255,255,255,.35)",marginBottom:8}}>
+      <div style=${{fontSize:11,color:thm.inv(.35),marginBottom:8}}>
         ${t.groupLabel} ${activeG}: ${TBG[activeG].map(function(tm){return teamName(tm,lang);}).join(" - ")}
       </div>
       ${[0,1,2].map(function(md){
         var mdMatches=GMS[activeG].slice(md*2,md*2+2);
         return html`<div key=${md}>
-          <div style=${{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.25)",letterSpacing:".08em",
+          <div style=${{fontSize:10,fontWeight:700,color:thm.inv(.25),letterSpacing:".08em",
             marginTop:md===0?0:14,marginBottom:5,textTransform:"uppercase"}}>Matchday ${md+1}</div>
           ${mdMatches.map(function(m){
             return html`<${MRow} key=${m.id} match=${m}
@@ -267,12 +268,12 @@ function PredictView(p) {
 
     ${section==="knockout"&&html`<${Card}>
       <div style=${{marginBottom:12,padding:"10px 14px",borderRadius:10,
-        background:r32info.complete?"rgba(74,222,128,.07)":"rgba(245,158,11,.07)",
-        border:"1px solid "+(r32info.complete?"rgba(74,222,128,.2)":"rgba(245,158,11,.2)")}}>
-        <div style=${{fontSize:11,fontWeight:700,color:r32info.complete?"#4ade80":"rgba(245,158,11,.8)"}}>
+        background:r32info.complete?"rgba(74,222,128,.07)":thm.a(.07),
+        border:"1px solid "+(r32info.complete?"rgba(74,222,128,.2)":thm.a(.2))}}>
+        <div style=${{fontSize:11,fontWeight:700,color:r32info.complete?"#4ade80":thm.a(.8)}}>
           ${r32info.complete?"- "+t.r32ok:"- "+t.r32Incomplete+" ("+r32info.groupsDone+"/12)"}
         </div>
-        ${!r32info.complete&&html`<div style=${{fontSize:11,color:"rgba(255,255,255,.4)",marginTop:4}}>
+        ${!r32info.complete&&html`<div style=${{fontSize:11,color:thm.inv(.4),marginTop:4}}>
           Complete group stage predictions first - the R32 fixtures resolve automatically from your group results.
         </div>`}
       </div>
@@ -286,18 +287,18 @@ function PredictView(p) {
           var done=filled===total&&total>0;
           return html`<button key=${rd.id} onClick=${function(){setActiveKO(rd.id);}} style=${{
             padding:"5px 10px",borderRadius:8,fontSize:11,fontWeight:700,cursor:"pointer",
-            border:"1.5px solid "+(activeKO===rd.id?"#f59e0b":done?"rgba(74,222,128,.4)":"rgba(255,255,255,.1)"),
-            background:activeKO===rd.id?"#f59e0b":done?"rgba(74,222,128,.08)":"transparent",
-            color:activeKO===rd.id?"#000":done?"#4ade80":"rgba(255,255,255,.5)",
+            border:"1.5px solid "+(activeKO===rd.id?thm.accent:done?"rgba(74,222,128,.4)":thm.inv(.1)),
+            background:activeKO===rd.id?thm.accent:done?"rgba(74,222,128,.08)":"transparent",
+            color:activeKO===rd.id?"#000":done?"#4ade80":thm.inv(.5),
             fontFamily:"'DM Sans',sans-serif"
           }}>${done&&activeKO!==rd.id?"- ":""}${rd.label} (${filled}/${total})</button>`;
         })}
       </div>
 
-      <div style=${{marginBottom:14,paddingBottom:12,borderBottom:"1px solid rgba(255,255,255,.08)"}}>
+      <div style=${{marginBottom:14,paddingBottom:12,borderBottom:thm.bdr(1,.08)}}>
         <h3 class="bb" style=${{fontSize:20}}>${koRoundDef.label}</h3>
         ${(koRoundDef.id==="r16"||koRoundDef.id==="qf"||koRoundDef.id==="sf"||koRoundDef.id==="final"||koRoundDef.id==="s3rd")&&html`
-          <p style=${{fontSize:11,color:"rgba(255,255,255,.4)",marginTop:4}}>
+          <p style=${{fontSize:11,color:thm.inv(.4),marginTop:4}}>
             Teams shown are derived from your previous round predictions. Predict the score - winner advances automatically.
             For draws, select who wins (H = home / A = away).
           </p>`}

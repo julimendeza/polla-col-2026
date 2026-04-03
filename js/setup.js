@@ -65,6 +65,7 @@ function useLang() { return useContext(LangCtx); }
 
 // ── Flag image component ─────────────────────────────────────────────
 function FlagImg(p) {
+  var thm = (useLang().thm) || THEMES.dark;
   var code = CC && CC[p.team];
   if (!code) return html`<span style=${{fontSize:13}}>${fl(p.team)}</span>`;
   return html`<img
@@ -75,7 +76,7 @@ function FlagImg(p) {
       display:"inline-block", verticalAlign:"middle",
       borderRadius:2, flexShrink:0,
       opacity: p.dim ? 0.45 : 1,
-      border:"1px solid rgba(255,255,255,.08)"
+      border:thm.bdr(1,.08)
     }}
     onError=${function(e){ e.target.style.display="none"; }}
   />`;
@@ -131,3 +132,43 @@ function resolveGroups(tbg, settings) {
   });
   return out;
 }
+
+// ── Themes ───────────────────────────────────────────────────────────
+var THEMES = {
+  dark: {
+    id: 'dark', label: '🌙 Noche',
+    accent:    '#FCD116',
+    accentD:   '#e8b800',
+    accentGrad:'linear-gradient(135deg,#FCD116,#e8b800)',
+    onAccent:  '#000',
+    deep:      '#080f1c',
+    row1:      '#0d1520',
+    tourBg:    '#1a2540',
+    loadBg:    '#080f1c',
+    loadColor: 'rgba(245,158,11,.4)',
+    bodyBg:    '#0a1628',
+    bodyGrad:  'radial-gradient(at 0% 0%, rgba(0,56,147,0.55) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(206,17,38,0.3) 0, transparent 50%), radial-gradient(at 50% 0%, rgba(252,209,22,0.12) 0, transparent 40%)',
+    a:    function(x){ return 'rgba(245,158,11,'+x+')'; },
+    inv:  function(x){ return 'rgba(255,255,255,'+x+')'; },
+    bdr:  function(w,x){ return w+'px solid rgba(255,255,255,'+x+')'; },
+    bdra: function(w,x){ return w+'px solid rgba(245,158,11,'+x+')'; }
+  },
+  estadio: {
+    id: 'estadio', label: '🏟 Estadio',
+    accent:    '#2e7d32',
+    accentD:   '#1b5e20',
+    accentGrad:'linear-gradient(135deg,#2e7d32,#1b5e20)',
+    onAccent:  '#fff',
+    deep:      '#c8e6c9',
+    row1:      '#dcedc8',
+    tourBg:    '#fff',
+    loadBg:    '#c8e6c9',
+    loadColor: 'rgba(46,125,50,.7)',
+    bodyBg:    '#f0f7ee',
+    bodyGrad:  'radial-gradient(at 0% 0%, rgba(46,125,50,0.2) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(27,94,32,0.15) 0, transparent 50%), radial-gradient(at 50% 100%, rgba(129,199,132,0.2) 0, transparent 40%)',
+    a:    function(x){ return 'rgba(46,125,50,'+x+')'; },
+    inv:  function(x){ return 'rgba(0,60,10,'+x+')'; },
+    bdr:  function(w,x){ return w+'px solid rgba(0,80,20,'+(Math.round(x*1.8*10)/10)+')'; },
+    bdra: function(w,x){ return w+'px solid rgba(46,125,50,'+x+')'; }
+  }
+};
