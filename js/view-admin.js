@@ -370,7 +370,7 @@ function AdminEmail(p) {
           ? html`<p><strong>Hey dear football friends,</strong></p>
               <p>The 2026 FIFA World Cup is just around the corner! Predict group stage scores (app auto-calculates who qualifies for the Round of 32), then pick teams advancing each knockout round.</p>
               <p>\ud83d\udc49 <strong>[SWEEPSTAKE WEBSITE LINK]</strong></p>
-              <p>Register: <strong>${p.settings.currency} ${p.settings.entryFee}</strong> \u2014 Pay Julian Mendez (Nequi / Bancolombia \u00b7 *** pendiente ***) \u00b7 Deadline: <strong>${p.settings.deadline ? new Date(p.settings.deadline).toLocaleDateString("en-CO",{day:"numeric",month:"long",year:"numeric"}) : "June 10, 2026"}</strong>.</p>
+              <p>Register: <strong>${p.settings.currency} ${p.settings.entryFee}</strong> \u2014 Pay Julian Mendez (Bancolombia \u00b7 *** 26271974298 ***) \u00b7 Deadline: <strong>${p.settings.deadline ? new Date(p.settings.deadline).toLocaleDateString("en-CO",{day:"numeric",month:"long",year:"numeric"}) : "June 10, 2026"}</strong>.</p>
               <p>More players = bigger prize! Please share with friends.</p>
               <p><strong>Good luck! \u26bd\ufe0e\ud83c\udfc6 - Julian</strong></p>`
           : html`<p><strong>Hello everyone!</strong></p>
