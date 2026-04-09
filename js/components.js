@@ -110,7 +110,7 @@ function StandingsTable(p) {
   return html`<div style=${{ marginTop:12, padding:"10px 12px", background:thm.inv(.03), borderRadius:12, border:thm.bdr(1,.07) }}>
     <div style=${{ display:"flex", justifyContent:"space-between", marginBottom:7 }}>
       <span style=${{ fontSize:10, fontWeight:700, color:thm.inv(.3), letterSpacing:".08em" }}>${t.standingsLabel} ${p.group}</span>
-      <span style=${{ fontSize:10, color: done ? ("rgba(74,222,128,.7)") : thm.a(.6) }}>${done ? "\u2713 " + t.qualifyDirect : "* projected"}</span>
+      <span style=${{ fontSize:10, color: done ? ("rgba(74,222,128,.7)") : thm.a(.6) }}>${done ? "\u2713 " + t.qualifyDirect : "* proyectado"}</span>
     </div>
     <div style=${{ display:"grid", gridTemplateColumns:"14px 1fr 22px 22px 22px 22px 42px 26px 28px", gap:2, fontSize:10, color:thm.inv(.25), marginBottom:4, padding:"0 2px" }}>
       <span/><span/>
@@ -163,9 +163,9 @@ function StandingsTable(p) {
       </div>`;
     })}
     <div style=${{ marginTop:5, fontSize:9, color:thm.inv(.2) }}>
-      \ud83d\udfe2 Top 2 qualify \u00b7
-      \ud83d\udfe1 Best 8 third-place qualify \u00b7
-      \ud83d\udd34 3rd place eliminated
+      \ud83d\udfe2 Mejores 2 clasifican  \u00b7
+      \ud83d\udfe1 Mejores 8 terceros clasifican \u00b7
+      \ud83d\udd34 Tercero eliminado
     </div>
   </div>`;
 }
