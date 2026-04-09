@@ -2,7 +2,7 @@
 
 A full-featured FIFA World Cup 2026 sweepstake web app for a group of friends. Built with vanilla React (no build step), hosted on GitHub Pages, with Firebase Realtime Database as the backend.
 
-**Live site:** _(GitHub Pages URL pending setup)_
+**Live site:** https://julimendeza.github.io/polla-col-2026/
 
 ---
 
