@@ -91,16 +91,24 @@ var pins = {
     await db.set("wc26_pins", list);
   },
   // Validate a PIN. Returns { ok, pin } or { ok:false, err }
-  validate: async function(code, accessMode) {
+  // Pass email to allow returning users to re-enter with their own PIN
+  validate: async function(code, accessMode, email) {
     if (accessMode === "off") return { ok: true, pin: null };
     var list = await pins.get();
     var found = list.find(function(p) {
       return p.pin.trim().toUpperCase() === code.trim().toUpperCase();
     });
-    if (!found) return { ok: false, err: "Invalid PIN." };
-    if (found.used) return { ok: false, err: "This PIN has already been used." };
-    return { ok: true, pin: found };
-  },
+    if (!found) return { ok: false, err: "PIN inválido." };
+    if (found.used) {
+      // Allow returning user: email matches (Simple) or Robust mode (PIN is identity)
+      var inEmail = (email||"").trim().toLowerCase();
+      var storedEmail = (found.usedEmail||"").trim().toLowerCase();
+      if (accessMode === "robust" || (inEmail && storedEmail && inEmail === storedEmail)) {
+        return { ok: true, pin: found, returning: true };
+      }
+      return { ok: false, err: "Este PIN ya fue utilizado." };
+    }
+    return { ok: true, pin: found };\n  },
   // Mark a PIN as used
   markUsed: async function(code, name, email) {
     var list = await pins.get();
