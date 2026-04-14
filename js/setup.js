@@ -108,7 +108,7 @@ var pins = {
       }
       return { ok: false, err: "Este PIN ya fue utilizado." };
     }
-    return { ok: true, pin: found };\n  },
+    return { ok: true, pin: found }; },
   // Mark a PIN as used
   markUsed: async function(code, name, email) {
     var list = await pins.get();
