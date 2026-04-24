@@ -68,15 +68,13 @@ function PredictView(p) {
       setPinLoading(false);
       if(!result.ok){setErr(result.err);return;}
       setValidPin(result.pin);
-      // Robust: pre-fill name/email from pin record
-      if(isRobust && result.pin){
+      // Pre-fill name/email for returning users (Simple: usedBy/usedEmail, Robust: name/email)
+      if(result.returning && result.pin){
+        setName(result.pin.usedBy||result.pin.name||"");
+        setEmail(result.pin.usedEmail||result.pin.email||"");
+      } else if(isRobust && result.pin){
         setName(result.pin.name||"");
         setEmail(result.pin.email||"");
-      }
-      // Robust returning user: pin is used but email matches — allow through
-      if(isRobust && result.pin && result.pin.used && !result.returning){
-        var robustEmail=(result.pin.email||"").trim().toLowerCase();
-        // already validated above via email param — this is a safety net
       }
     }
     // Name/email validation (skip in robust — pre-filled)

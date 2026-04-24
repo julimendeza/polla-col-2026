@@ -100,13 +100,18 @@ var pins = {
     });
     if (!found) return { ok: false, err: "PIN inválido." };
     if (found.used) {
-      // Allow returning user: email matches (Simple) or Robust mode (PIN is identity)
-      var inEmail = (email||"").trim().toLowerCase();
-      var storedEmail = (found.usedEmail||"").trim().toLowerCase();
-      if (accessMode === "robust" || (inEmail && storedEmail && inEmail === storedEmail)) {
+      // Allow returning user: Robust (PIN = identity) or Simple (pre-fill from pin record)
+      if (accessMode === "robust") {
         return { ok: true, pin: found, returning: true };
       }
-      return { ok: false, err: "Este PIN ya fue utilizado." };
+      // Simple mode: if email provided and matches, allow. If no email yet, allow anyway
+      // (email will be pre-filled from the pin record in the UI)
+      var inEmail = (email||"").trim().toLowerCase();
+      var storedEmail = (found.usedEmail||"").trim().toLowerCase();
+      if (!inEmail || (storedEmail && inEmail === storedEmail)) {
+        return { ok: true, pin: found, returning: true };
+      }
+      return { ok: false, err: "Este PIN ya fue utilizado por otra persona." };
     }
     return { ok: true, pin: found }; },
   // Mark a PIN as used
