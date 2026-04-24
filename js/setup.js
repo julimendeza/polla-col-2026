@@ -100,18 +100,9 @@ var pins = {
     });
     if (!found) return { ok: false, err: "PIN inválido." };
     if (found.used) {
-      // Allow returning user: Robust (PIN = identity) or Simple (pre-fill from pin record)
-      if (accessMode === "robust") {
-        return { ok: true, pin: found, returning: true };
-      }
-      // Simple mode: if email provided and matches, allow. If no email yet, allow anyway
-      // (email will be pre-filled from the pin record in the UI)
-      var inEmail = (email||"").trim().toLowerCase();
-      var storedEmail = (found.usedEmail||"").trim().toLowerCase();
-      if (!inEmail || (storedEmail && inEmail === storedEmail)) {
-        return { ok: true, pin: found, returning: true };
-      }
-      return { ok: false, err: "Este PIN ya fue utilizado por otra persona." };
+      // PIN is privately distributed — whoever has the PIN is the right person.
+      // Always allow through so users can edit their predictions.
+      return { ok: true, pin: found, returning: true };
     }
     return { ok: true, pin: found }; },
   // Mark a PIN as used
