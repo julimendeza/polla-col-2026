@@ -146,7 +146,7 @@ var DEF = {
   currency:   "COP",
   adminEmail: "",
   firebase:   "https://polla-col-2026-default-rtdb.firebaseio.com",
-  deadline:   "2026-06-10T23:59",
+  deadline:   "2026-06-11T20:00:00",
   tcUrl:      "",
   access:     "off",   // "off" | "simple" | "robust"
   // Playoff confirmations — set by admin after finals (March 31)
