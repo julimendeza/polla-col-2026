@@ -61,6 +61,9 @@ function PredictView(p) {
   async function handleStart(){
     setErr("");
     // PIN validation
+    var lookupEmail = email;  // local copy — React state is stale within this call
+    var lookupPin   = pinCode ? pinCode.trim().toUpperCase() : "";
+
     if(needsPin){
       if(!pinCode.trim()){setErr(lang==="es"?"Ingresa tu PIN de acceso.":"Enter your access PIN.");return;}
       setPinLoading(true);
@@ -68,21 +71,35 @@ function PredictView(p) {
       setPinLoading(false);
       if(!result.ok){setErr(result.err);return;}
       setValidPin(result.pin);
-      // Pre-fill name/email for returning users (Simple: usedBy/usedEmail, Robust: name/email)
+      // Pre-fill name/email — also capture into local vars for immediate use below
       if(result.returning && result.pin){
-        setName(result.pin.usedBy||result.pin.name||"");
-        setEmail(result.pin.usedEmail||result.pin.email||"");
+        var preName  = result.pin.usedBy||result.pin.name||"";
+        var preEmail = result.pin.usedEmail||result.pin.email||"";
+        setName(preName);
+        setEmail(preEmail);
+        lookupEmail = preEmail;  // use pre-filled value, not stale state
       } else if(isRobust && result.pin){
-        setName(result.pin.name||"");
-        setEmail(result.pin.email||"");
+        var preName  = result.pin.name||"";
+        var preEmail = result.pin.email||"";
+        setName(preName);
+        setEmail(preEmail);
+        lookupEmail = preEmail;
       }
     }
     // Name/email validation (skip in robust — pre-filled)
     if(!isRobust || !needsPin){
-      if(!name.trim()){setErr(t.nameL+"?");return;}
-      if(!email.trim()||email.indexOf("@")<0){setErr(t.emailL+"?");return;}
+      if(!name.trim()&&!lookupEmail){setErr(t.nameL+"?");return;}
+      if(!lookupEmail||lookupEmail.indexOf("@")<0){setErr(t.emailL+"?");return;}
     }
-    var ex=participants.find(function(x){return x.email.toLowerCase()===email.toLowerCase();});
+    // Find existing participant — first by PIN (most reliable), then by email
+    var ex = participants.find(function(x){
+      return lookupPin && x.pin && x.pin.toUpperCase()===lookupPin;
+    });
+    if(!ex && lookupEmail){
+      ex = participants.find(function(x){
+        return x.email && x.email.toLowerCase()===lookupEmail.toLowerCase();
+      });
+    }
     if(ex){
       setExistId(ex.id);
       setPreds(Object.assign({},EP,{groups:{},ko:{}},ex.preds,{
@@ -118,9 +135,15 @@ function PredictView(p) {
     setSaving(true);
     var id=existId||("p_"+Date.now());
     var np=Object.assign({},preds);
+    var pinUpper = pinCode ? pinCode.trim().toUpperCase() : undefined;
     var upd=existId
-      ? participants.map(function(x){return x.id===existId?Object.assign({},x,{name:name,email:email,preds:np}):x;})
-      : participants.concat([{id:id,name:name,email:email,preds:np}]);
+      ? participants.map(function(x){
+          if(x.id!==existId)return x;
+          var updated = Object.assign({},x,{name:name,email:email,preds:np});
+          if(pinUpper) updated.pin = pinUpper;
+          return updated;
+        })
+      : participants.concat([{id:id,name:name,email:email,preds:np,pin:pinUpper}]);
     await saveP(upd);
     // Mark PIN as used (only for new registrations, not updates)
     if(needsPin && !existId && validPin){
