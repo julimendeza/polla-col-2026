@@ -309,6 +309,10 @@ function BracketPage(p) {
   var activeG = activeGState[0], setActiveG = activeGState[1];
 
   var me = participants.find(function(x){ return x.id === selId; }) || participants[0];
+  // "actual" mode — view real results instead of a participant's predictions
+  var isActual = selId === "__actual__";
+  var actualPreds = isActual ? {groups: p.results&&p.results.groups||{}, ko: p.results&&p.results.ko||{}} : null;
+  var displayPreds = isActual ? actualPreds : (me && me.preds);
 
   return html`<div className="fade" style=${{ maxWidth:780, margin:"0 auto", padding:"24px 16px 60px" }}>
     <div style=${{ display:"flex", alignItems:"center", gap:12, marginBottom:20 }}>
@@ -320,6 +324,13 @@ function BracketPage(p) {
     </div>
 
     <div style=${{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:16 }}>
+      <button onClick=${function(){ setSelId("__actual__"); }} style=${{
+        padding:"6px 14px", borderRadius:8, fontSize:13, fontWeight:700, cursor:"pointer",
+        border:"1.5px solid " + (selId==="__actual__" ? "#4ade80" : "rgba(74,222,128,.25)"),
+        background: selId==="__actual__" ? "rgba(74,222,128,.15)" : "rgba(74,222,128,.05)",
+        color: selId==="__actual__" ? "#4ade80" : "rgba(74,222,128,.5)",
+        fontFamily:"'DM Sans',sans-serif"
+      }}>\ud83c\udfc6 ${lang==="es"?"Real":"Actual"}</button>
       ${participants.map(function(px){
         return html`<button key=${px.id} onClick=${function(){ setSelId(px.id); }} style=${{
           padding:"6px 14px", borderRadius:8, fontSize:13, fontWeight:600, cursor:"pointer",
@@ -337,14 +348,14 @@ function BracketPage(p) {
           padding:"7px 16px", borderRadius:9, fontSize:13, fontWeight:600, cursor:"pointer",
           border:"none", transition:"all .15s",
           background: activeTab===tb.id ? thm.accent : thm.inv(.07),
-          color: activeTab===tb.id ? "#000" : thm.inv(.6),
+          color: activeTab===tb.id ? thm.onAccent : thm.inv(.6),
           fontFamily:"'DM Sans',sans-serif"
         }}>${tb.l}</button>`;
       })}
     </div>
 
-    ${activeTab === "bracket" && (me
-      ? html`<${BracketView} preds=${me.preds}/>`
+    ${activeTab === "bracket" && (displayPreds
+      ? html`<${BracketView} preds=${displayPreds}/>`
       : html`<div style=${{ textAlign:"center", padding:"60px", color:thm.inv(.3) }}>${t.bracketNoPreds}</div>`
     )}
 
@@ -360,11 +371,53 @@ function BracketPage(p) {
           }}>${g}</button>`;
         })}
       </div>
-      ${me && html`<${StandingsTable}
+      ${displayPreds && html`<${StandingsTable}
         group=${activeG}
-        preds=${me.preds&&me.preds.groups}
-        allPreds=${me.preds&&me.preds.groups}
+        preds=${displayPreds.groups}
+        allPreds=${displayPreds.groups}
       />`}
+      ${displayPreds && html`<div style=${{marginTop:14}}>
+        <div style=${{fontSize:10,fontWeight:700,color:thm.inv(.3),letterSpacing:".08em",marginBottom:8,textTransform:"uppercase"}}>
+          ${lang==="es"?"Predicciones de partidos":"Match predictions"}
+        </div>
+        ${GMS[activeG]&&GMS[activeG].map(function(m){
+          var pred=displayPreds.groups&&displayPreds.groups[m.id];
+          var res=p.results&&p.results.groups&&p.results.groups[m.id];
+          var hv=pred?pred.h:""; var av=pred?pred.a:"";
+          var hasPred=pred&&pred.h!==''&&pred.h!==undefined;
+          var hasRes=res&&res.h!==''&&res.h!==undefined;
+          var st=hasPred&&hasRes?mSt({h:hv,a:av},res):null;
+          var bg=st==="exact"?thm.a(.12):st==="result"?thm.a(.1):st==="partial"?"rgba(59,130,246,.08)":thm.inv(.03);
+          var bd=st==="exact"?thm.bdra(1.5,.35):st==="result"?thm.bdra(1.5,.25):st==="partial"?"1.5px solid rgba(59,130,246,.2)":thm.bdr(1.5,.08);
+          var pts=st?scoreMatch({h:hv,a:av},res):null;
+          return html`<div key=${m.id} style=${{
+            display:"flex",alignItems:"center",gap:8,padding:"7px 10px",
+            borderRadius:10,border:bd,marginBottom:5,
+            background:bg,fontSize:12
+          }}>
+            <div style=${{flex:1,display:"flex",alignItems:"center",justifyContent:"flex-end",gap:5,overflow:"hidden"}}>
+              <span style=${{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontWeight:500}}>${teamName(m.home,lang)}</span>
+              <${FlagImg} team=${m.home}/>
+            </div>
+            <div style=${{display:"flex",flexDirection:"column",alignItems:"center",gap:1,flexShrink:0}}>
+              <span style=${{fontWeight:800,fontSize:13,color:hasPred?thm.inv(.95):thm.inv(.2),letterSpacing:1}}>
+                ${hasPred?hv+"-"+av:"?-?"}
+              </span>
+              ${hasRes&&html`<span style=${{fontSize:9,color:thm.inv(.35)}}>
+                ${lang==="es"?"Real:":"Act:"} ${res.h}-${res.a}
+              </span>`}
+            </div>
+            <div style=${{flex:1,display:"flex",alignItems:"center",gap:5,overflow:"hidden"}}>
+              <${FlagImg} team=${m.away}/>
+              <span style=${{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontWeight:500}}>${teamName(m.away,lang)}</span>
+            </div>
+            ${pts!==null&&html`<span style=${{fontSize:10,fontWeight:700,flexShrink:0,minWidth:24,textAlign:"right",
+              color:pts>=6?(thm.id==="estadio"?"#4ade80":"#4ade80"):pts>=3?thm.accent:pts>0?"#60a5fa":thm.inv(.25)}}>
+              ${pts>0?"+"+pts:pts===0&&hasPred?"0":""}
+            </span>`}
+          </div>`;
+        })}
+      </div>`}
     </div>`}
   </div>`;
 }
