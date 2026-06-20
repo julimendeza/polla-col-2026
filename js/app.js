@@ -142,7 +142,8 @@ function App() {
         participants=${participants} results=${results} settings=${settings}/>`}
 
       ${view === "bracket" && html`<${BracketPage}
-        participants=${participants}/>`}
+        participants=${participants}
+        results=${results}/>`}
 
       ${view === "admin" && html`<${AdminView}
         participants=${participants}
