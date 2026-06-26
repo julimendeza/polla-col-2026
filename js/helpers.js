@@ -509,7 +509,7 @@ async function generateReportPDF(participant, results, settings, lang) {
   var preds  = participant.preds || {};
   var sc     = settings.scoring  || DEF.scoring;
   var scored = calcScore(preds, results, sc);
-  var rC     = cascadeKO(results.groups, results.ko || {});
+  var rC     = cascadeKO(results.groups, results.ko || {}, results.fairplay);
   var pC     = cascadeKO(preds.groups,   preds.ko   || {});
 
   // Pre-fetch all flags

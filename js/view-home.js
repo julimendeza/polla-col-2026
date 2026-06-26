@@ -4,7 +4,7 @@ function HomeView(p) {
   var thm=lctx.thm||THEMES.dark;
   var participants = p.participants, results = p.results, settings = p.settings, setView = p.setView;
 
-  var rC = useMemo(function(){ return cascadeKO(results.groups, results.ko||{}); }, [results]);
+  var rC = useMemo(function(){ return cascadeKO(results.groups, results.ko||{}, results.fairplay); }, [results]);
   var ranked = useMemo(function(){
     return participants
       .map(function(x){ return Object.assign({}, x, calcScore(x.preds, results, settings.scoring)); })
@@ -184,7 +184,15 @@ function HomeView(p) {
       </div>
     </div>`}
 
-    ${isPastDeadline&&html`<div style=${{
+    ${isPastDeadline&&settings.koReopen&&html`<div style=${{
+      padding:"10px 16px",borderRadius:10,marginBottom:14,
+      background:"rgba(74,222,128,.08)",border:"1px solid rgba(74,222,128,.25)",
+      fontSize:13,color:"#4ade80",textAlign:"center"
+    }}>
+      🔓 ${lang==="es"?"La fase de grupos está cerrada, pero la eliminatoria está reabierta para revisión.":"Group-stage predictions are closed, but knockout predictions are reopened for review."}
+    </div>`}
+
+    ${isPastDeadline&&!settings.koReopen&&html`<div style=${{
       padding:"10px 16px",borderRadius:10,marginBottom:14,
       background:"rgba(248,113,113,.08)",border:"1px solid rgba(248,113,113,.25)",
       fontSize:13,color:"#f87171",textAlign:"center"
@@ -209,8 +217,8 @@ function HomeView(p) {
         WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>${t.title}</h1>
       <p style=${{ color:thm.inv(.42), fontSize:13, marginTop:10, lineHeight:1.7 }}>${t.sub}</p>
       <div style=${{ marginTop:20, display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
-        ${!isPastDeadline&&html`<${Btn} onClick=${function(){ setView("predict"); }} sx=${{ padding:"12px 28px", fontSize:15 }}>\u26bd\ufe0e ${t.predict}</${Btn}>`}
-        ${isPastDeadline&&html`<${Btn} v="secondary" disabled=${true} sx=${{ padding:"12px 28px", fontSize:15 }}>\ud83d\udd12 ${lang==="es"?"Predicciones cerradas":"Predictions closed"}</${Btn}>`}
+        ${(!isPastDeadline||settings.koReopen)&&html`<${Btn} onClick=${function(){ setView("predict"); }} sx=${{ padding:"12px 28px", fontSize:15 }}>\u26bd\ufe0e ${settings.koReopen&&isPastDeadline?(lang==="es"?"Editar eliminatoria":"Edit knockout"):t.predict}</${Btn}>`}
+        ${isPastDeadline&&!settings.koReopen&&html`<${Btn} v="secondary" disabled=${true} sx=${{ padding:"12px 28px", fontSize:15 }}>\ud83d\udd12 ${lang==="es"?"Predicciones cerradas":"Predictions closed"}</${Btn}>`}
         <${Btn} v="secondary" onClick=${function(){ setView("bracket"); }} sx=${{ padding:"12px 20px", fontSize:15 }}>\ud83c\udfc6 ${t.bracket}</${Btn}>
         <${Btn} v="secondary" onClick=${function(){ setView("leaderboard"); }} sx=${{ padding:"12px 20px", fontSize:15 }}>${t.table}</${Btn}>
       </div>
@@ -355,7 +363,7 @@ function BracketPage(p) {
     </div>
 
     ${activeTab === "bracket" && (displayPreds
-      ? html`<${BracketView} preds=${displayPreds}/>`
+      ? html`<${BracketView} preds=${displayPreds} fairplay=${isActual ? (p.results&&p.results.fairplay) : null}/>`
       : html`<div style=${{ textAlign:"center", padding:"60px", color:thm.inv(.3) }}>${t.bracketNoPreds}</div>`
     )}
 
@@ -375,6 +383,7 @@ function BracketPage(p) {
         group=${activeG}
         preds=${displayPreds.groups}
         allPreds=${displayPreds.groups}
+        fairplay=${isActual ? (p.results&&p.results.fairplay) : null}
       />`}
       ${displayPreds && html`<div style=${{marginTop:14}}>
         <div style=${{fontSize:10,fontWeight:700,color:thm.inv(.3),letterSpacing:".08em",marginBottom:8,textTransform:"uppercase"}}>

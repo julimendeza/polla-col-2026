@@ -50,7 +50,10 @@ function SI(p) {
   return html`<input
     type="number" min="0" max="20" className="si"
     value=${p.val || ""}
-    onChange=${function(e){ p.onChange(e.target.value.replace(/\D/g,"").slice(0,2)); }}
+    readOnly=${!!p.readOnly}
+    disabled=${!!p.readOnly}
+    style=${p.readOnly?{opacity:.55,cursor:"not-allowed"}:{}}
+    onChange=${function(e){ if(!p.readOnly) p.onChange(e.target.value.replace(/\D/g,"").slice(0,2)); }}
     placeholder="?"/>`;
 }
 
@@ -59,13 +62,27 @@ function MRow(p) {
   var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
   var res = p.res, hv = p.hv || "", av = p.av || "";
   var st  = (res && res.h !== "") ? mSt({ h:hv, a:av }, res) : null;
-  var bg  = st==="exact"  ? "rgba(34,197,94,.12)"  :
-            st==="result" ? thm.a(.1)  :
-            st==="partial"? "rgba(59,130,246,.08)" : thm.inv(.04);
-  var bd  = st==="exact"  ? "rgba(34,197,94,.35)"  :
-            st==="result" ? thm.a(.25) :
-            st==="partial"? "rgba(59,130,246,.2)"  : thm.inv(.09);
   var pts = st ? scoreMatch({ h:hv, a:av }, res) : null;
+
+  function pointStyle(v) {
+    var greenBase = thm.id === "estadio" ? "34,197,94" : "74,222,128";
+    var mutedText = thm.inv(.28);
+    var map = {
+      0: {bg: thm.inv(.035), bd: thm.inv(.11),  col: mutedText, weight:700},
+      1: {bg: "rgba(45,212,191,.07)", bd: "rgba(45,212,191,.24)", col: "#2dd4bf", weight:700},
+      3: {bg: "rgba("+greenBase+",.08)", bd: "rgba("+greenBase+",.25)", col: "#86efac", weight:700},
+      4: {bg: "rgba("+greenBase+",.12)", bd: "rgba("+greenBase+",.38)", col: "#4ade80", weight:750},
+      5: {bg: "rgba(22,163,74,.17)", bd: "rgba(22,163,74,.55)", col: "#22c55e", weight:800},
+      7: {bg: "rgba(250,204,21,.18)", bd: "rgba(250,204,21,.62)", col: "#facc15", weight:900}
+    };
+    return map[v] || map[0];
+  }
+
+  var ps = pts !== null ? pointStyle(pts) : null;
+  var bg  = ps ? ps.bg : thm.inv(.04);
+  var bd  = ps ? ps.bd : thm.inv(.09);
+  var ptsCol = ps ? ps.col : thm.inv(.2);
+  var ptsWeight = ps ? ps.weight : 700;
 
   return html`<div style=${{ display:"flex", alignItems:"center", gap:8, padding:"8px 10px", borderRadius:12, border:"1.5px solid "+bd, marginBottom:5, background:bg, transition:"all .15s" }}>
     <div style=${{ flex:1, display:"flex", alignItems:"center", justifyContent:"flex-end", gap:5, overflow:"hidden" }}>
@@ -73,16 +90,15 @@ function MRow(p) {
       <${FlagImg} team=${p.match.home}/>
     </div>
     <div style=${{ display:"flex", alignItems:"center", gap:4, flexShrink:0 }}>
-      <${SI} val=${hv} onChange=${p.onH}/>
+      <${SI} val=${hv} onChange=${p.onH} readOnly=${p.readOnly}/>
       <span style=${{ color:thm.inv(.2), fontSize:10 }}>-</span>
-      <${SI} val=${av} onChange=${p.onA}/>
+      <${SI} val=${av} onChange=${p.onA} readOnly=${p.readOnly}/>
     </div>
     <div style=${{ flex:1, display:"flex", alignItems:"center", gap:5, overflow:"hidden" }}>
       <${FlagImg} team=${p.match.away}/>
       <span style=${{ fontSize:12, fontWeight:500, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>${teamName(p.match.away,lang)}</span>
     </div>
-    ${pts !== null && html`<span style=${{ fontSize:11, fontWeight:700, flexShrink:0, minWidth:28, textAlign:"right",
-      color: pts>=6?("#4ade80"):pts>=3?thm.accent:pts>0?"#60a5fa":thm.inv(.2) }}>
+    ${pts !== null && html`<span style=${{ fontSize:11, fontWeight:ptsWeight, flexShrink:0, minWidth:28, textAlign:"right", color:ptsCol }}>
       ${pts > 0 ? "+" + pts : (pts === 0 && hv !== "" ? "0" : "")}
     </span>`}
   </div>`;
@@ -92,14 +108,14 @@ function MRow(p) {
 function StandingsTable(p) {
   var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
   var t    = useLang().t;
-  var st   = calcStandings(p.preds || {}, p.group);
+  var st   = calcStandings(p.preds || {}, p.group, p.fairplay);
   var done = groupDone(p.preds || {}, p.group);
 
   // Work out which 3rd-place teams qualify across all groups
   // allPreds = full groups predictions object (needed to rank all thirds)
   var qualifiedThirds = [];
   if (p.allPreds) {
-    var r32info = getR32(p.allPreds);
+    var r32info = getR32(p.allPreds, p.fairplay);
     qualifiedThirds = r32info.best8.map(function(x){ return x.team; });
   }
   var third = st[2] && st[2].team;
@@ -262,11 +278,25 @@ function SinglePick(p) {
 
 // - Build properly ordered bracket halves -
 
+// Map every KO fixture id -> its official FIFA match number (Match 73-104),
+// so knockout rows can show "M73" etc., matching the FIFA bracket.
+var KO_MATCH_NUM = (function(){
+  var m = {};
+  if (typeof R32_FIXTURES !== "undefined") R32_FIXTURES.forEach(function(f){ m[f.id] = f.num; });
+  if (typeof KO_BRACKET !== "undefined") {
+    ["r16","qf","sf"].forEach(function(rd){ (KO_BRACKET[rd]||[]).forEach(function(f){ m[f.id] = f.num; }); });
+    if (KO_BRACKET.final) m[KO_BRACKET.final.id] = KO_BRACKET.final.num;
+    if (KO_BRACKET.s3rd)  m[KO_BRACKET.s3rd.id]  = KO_BRACKET.s3rd.num;
+  }
+  return m;
+})();
+
 // - KO Match Row (score entry for knockout matches) -
 function KOMatchRow(p) {
   var lctx=useLang(); var t=lctx.t; var lang=lctx.lang;
   var thm=lctx.thm||THEMES.dark;
   var match=p.match; // { id, home, away, score, winner, loser }
+  var matchNum=(match&&match.num)||(match&&KO_MATCH_NUM[match.id]); // FIFA match number 73-104
   var sc=p.sc||{}; // current prediction score object { h, a, winner }
   var onChange=p.onChange;
   var isResult=p.isResult; // admin mode
@@ -296,6 +326,7 @@ function KOMatchRow(p) {
     borderRadius:10,marginBottom:5,
     background:bgCol,border:'1.5px solid '+borderCol,transition:'all .15s'
   }}>
+    ${matchNum?html`<span style=${{flexShrink:0,fontSize:9,fontWeight:700,color:thm.inv(.38),fontFamily:"'DM Sans',sans-serif",minWidth:24,textAlign:'left',letterSpacing:'.02em'}}>M${matchNum}</span>`:''}
     <div style=${{flex:1,display:'flex',alignItems:'center',justifyContent:'flex-end',gap:5,overflow:'hidden'}}>
       ${homeTeam
         ? html`<span style=${{fontSize:11,fontWeight:predictedWinner===homeTeam?600:400,
@@ -346,7 +377,7 @@ function KOMatchRow(p) {
 
 function BCol(p) {
   var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
-  var teams=p.teams, next=p.next||[], H=p.H, PW=p.PW, PH=p.PH, scores=p.scores||{};
+  var teams=p.teams, next=p.next||[], H=p.H, PW=p.PW, PH=p.PH, scores=p.scores||{}, nums=p.nums||[];
   var n=teams.length;
   var slotH=H/n;
   function isAdv(team){return team&&next.filter(Boolean).length>0&&next.indexOf(team)>=0;}
@@ -375,6 +406,14 @@ function BCol(p) {
           `
           : html`<span style=${{fontSize:8,color:thm.inv(.18),fontStyle:'italic',flex:1}}>TBD</span>`
         }
+      </div>`;
+    })}
+    ${nums.map(function(num,k){
+      if(num==null) return null;
+      return html`<div key=${'m'+k} style=${{position:'absolute',top:((2*k+1)*slotH-6)+'px',left:0,right:0,height:'12px',
+        display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'none'}}>
+        <span style=${{fontSize:7,fontWeight:700,color:thm.inv(.38),background:thm.inv(.06),
+          borderRadius:3,padding:'0 3px',fontFamily:"'DM Sans',sans-serif",letterSpacing:'.02em'}}>M${num}</span>
       </div>`;
     })}
   </div>`;
@@ -425,65 +464,62 @@ function BracketView(p) {
   if(!preds) return html`<div style=${{textAlign:'center',padding:'60px 20px',color:thm.inv(.3)}}>${t.bracketNoPreds}</div>`;
 
   var C = useMemo(function(){
-    return cascadeKO(preds.groups, preds.ko||{});
+    return cascadeKO(preds.groups, preds.ko||{}, p.fairplay);
   }, [preds]);
 
-  var ch=C.champion, ru=null;
-  if(C.finalTeams&&C.finalTeams.length>0) ru=C.finalTeams.find(function(x){return x!==ch;})||null;
+  var ch=C.champion;
+  var ru=C.final&&C.final.loser;
   var thirds=C.thirdTeams||[];
   var thirdWin=C.thirdWin;
 
   var H=512, PH=20, PW=160, CW=20;
 
-  // Build flat team arrays for each column half
-  // Each round: pairs of [home,away] from fixtures in order
-  // Left half = first 8 R32 fixtures, Right half = last 8
-  function colFromFixtures(fixtures, resultMap, half) {
-    var half8 = half==='left' ? fixtures.slice(0,8) : fixtures.slice(8);
-    var out = [];
-    half8.forEach(function(f){
-      var r = resultMap[f.id];
-      out.push(r&&r.home||null);
-      out.push(r&&r.away||null);
-    });
-    return out;
-  }
-
-  function colFromKO(fixtures, resultMap, half) {
-    var n=fixtures.length, h=n/2;
-    var half_f = half==='left' ? fixtures.slice(0,h) : fixtures.slice(h);
+  // Build flat team arrays for each column half.
+  // FIFA pairs R32 winners in an INTERLEAVED order (R16 M89 = M74+M77, M90 = M73+M75, ...),
+  // NOT sequentially. The visual columns must follow the bracket tree, or the connector lines
+  // link the wrong matches. Derive each column's match order from KO_BRACKET by walking the
+  // tree down from each semi-final (home before away), so the drawing always matches the cascade.
+  var koChildren = {};
+  KO_BRACKET.r16.forEach(function(f){ koChildren[f.id]=[f.home,f.away]; });
+  KO_BRACKET.qf .forEach(function(f){ koChildren[f.id]=[f.home,f.away]; });
+  KO_BRACKET.sf .forEach(function(f){ koChildren[f.id]=[f.home,f.away]; });
+  function descendants(rootId, prefix){
     var out=[];
-    half_f.forEach(function(f){
-      var r=resultMap[f.id];
+    (function rec(id){
+      if(id.indexOf(prefix)===0) out.push(id);
+      var ch=koChildren[id];
+      if(ch){ rec(ch[0]); rec(ch[1]); }
+    })(rootId);
+    return out;
+  }
+  var lR32ids = descendants('sf_0','r32_'), rR32ids = descendants('sf_1','r32_');
+  var lR16ids = descendants('sf_0','r16_'), rR16ids = descendants('sf_1','r16_');
+  var lQFids  = descendants('sf_0','qf_'),  rQFids  = descendants('sf_1','qf_');
+  var lSFids  = ['sf_0'], rSFids = ['sf_1'];
+
+  function teamsFromIds(ids, resultMap){
+    var out=[];
+    ids.forEach(function(id){
+      var r=resultMap[id];
       out.push(r&&r.home||null);
       out.push(r&&r.away||null);
     });
     return out;
   }
+  function nn(arr){ return arr.filter(Boolean); }
 
-  var lR32 = colFromFixtures(R32_FIXTURES, C.r32, 'left');
-  var rR32 = colFromFixtures(R32_FIXTURES, C.r32, 'right');
-  var lR16 = colFromKO(KO_BRACKET.r16, C.r16, 'left');
-  var rR16 = colFromKO(KO_BRACKET.r16, C.r16, 'right');
-  var lQF  = colFromKO(KO_BRACKET.qf,  C.qf,  'left');
-  var rQF  = colFromKO(KO_BRACKET.qf,  C.qf,  'right');
-  var lSF  = [C.sf['sf_0']&&C.sf['sf_0'].home||null, C.sf['sf_0']&&C.sf['sf_0'].away||null];
-  var rSF  = [C.sf['sf_1']&&C.sf['sf_1'].home||null, C.sf['sf_1']&&C.sf['sf_1'].away||null];
+  var lR32 = teamsFromIds(lR32ids, C.r32), rR32 = teamsFromIds(rR32ids, C.r32);
+  var lR16 = teamsFromIds(lR16ids, C.r16), rR16 = teamsFromIds(rR16ids, C.r16);
+  var lQF  = teamsFromIds(lQFids,  C.qf),  rQF  = teamsFromIds(rQFids,  C.qf);
+  var lSF  = teamsFromIds(lSFids,  C.sf),  rSF  = teamsFromIds(rSFids,  C.sf);
 
-  
-  // r32teams = R32 winners (advance to R16), r16teams = R16 winners (advance to QF), etc.
-  var lR32adv = C.r32teams.slice(0, 8);   // winners of fixtures 0-7
-  var rR32adv = C.r32teams.slice(8);      // winners of fixtures 8-15
-  var lR16adv = C.r16teams.slice(0, 4);   // winners of r16 0-3
-  var rR16adv = C.r16teams.slice(4);      // winners of r16 4-7
-  var lQFadv  = C.qfteams.slice(0, 2);
-  var rQFadv  = C.qfteams.slice(2);
-  // SF advancing: winner of each SF goes to the Final
+  // A team "advances" if it appears in the next column toward the centre.
+  var lR32adv = nn(lR16), rR32adv = nn(rR16);
+  var lR16adv = nn(lQF),  rR16adv = nn(rQF);
+  var lQFadv  = nn(lSF),  rQFadv  = nn(rSF);
   var lSFadv  = C.sf['sf_0']&&C.sf['sf_0'].winner ? [C.sf['sf_0'].winner] : [];
   var rSFadv  = C.sf['sf_1']&&C.sf['sf_1'].winner ? [C.sf['sf_1'].winner] : [];
 
-  
-  // e.g. lR32 pair 0 = r32_0, pair 1 = r32_1, ...
   function scoreMap(matchIds) {
     var out = {};
     matchIds.forEach(function(id, i) {
@@ -495,17 +531,9 @@ function BracketView(p) {
     return out;
   }
 
-  var lR32ids = ['r32_0','r32_1','r32_2','r32_3','r32_4','r32_5','r32_6','r32_7'];
-  var rR32ids = ['r32_8','r32_9','r32_10','r32_11','r32_12','r32_13','r32_14','r32_15'];
-  var lR16ids = ['r16_0','r16_1','r16_2','r16_3'];
-  var rR16ids = ['r16_4','r16_5','r16_6','r16_7'];
-  var lQFids  = ['qf_0','qf_1'];
-  var rQFids  = ['qf_2','qf_3'];
-  var lSFids  = ['sf_0'];
-  var rSFids  = ['sf_1'];
-
   function col(label, teams, adv, matchIds) {
-    return html`<${BCol} label=${label} teams=${teams} next=${adv} H=${H} PW=${PW} PH=${PH} scores=${scoreMap(matchIds)}/>`;
+    var nums = (matchIds||[]).map(function(id){ return KO_MATCH_NUM[id]; });
+    return html`<${BCol} label=${label} teams=${teams} next=${adv} H=${H} PW=${PW} PH=${PH} scores=${scoreMap(matchIds)} nums=${nums}/>`;
   }
   function cn(outer, inner, dir) {
     return html`<${BConn} outer=${outer} inner=${inner} dir=${dir} H=${H} CW=${CW}/>`;
@@ -527,7 +555,7 @@ function BracketView(p) {
           {label:'', w:CW},
           {label:t.sf,  w:PW},
           {label:'', w:CW},
-          {label:'\ud83c\udfc6', w:170},
+          {label:'🏆', w:170},
           {label:'', w:CW},
           {label:t.sf,  w:PW},
           {label:'', w:CW},
@@ -583,7 +611,7 @@ function BracketView(p) {
           </div>`}
           
           ${thirds.filter(Boolean).length>0&&html`<div style=${{width:'100%'}}>
-            <div style=${{fontSize:9,fontWeight:700,color:'rgba(180,83,9,.7)',textAlign:'center',marginBottom:4}}>${'\ud83e\udd49'} 3rd</div>
+            <div style=${{fontSize:9,fontWeight:700,color:'rgba(180,83,9,.7)',textAlign:'center',marginBottom:4}}>${'🥉'} 3rd</div>
             ${thirds.slice(0,2).filter(Boolean).map(function(t3){
               var isW=t3===thirdWin;
               return html`<div key=${t3} style=${{display:'flex',alignItems:'center',gap:5,padding:'3px 6px',borderRadius:5,marginBottom:3,

@@ -27,11 +27,17 @@ function PredictView(p) {
   // Deadline guard
   var deadline = settings.deadline ? new Date(settings.deadline) : null;
   var isPastDeadline = deadline && new Date() > deadline;
-  if (isPastDeadline) return html`<div class="fade" style=${{maxWidth:440,margin:"0 auto",padding:"80px 16px",textAlign:"center"}}>
+  // Knockout re-open: when admin enables settings.koReopen, the deadline still
+  // locks the GROUP STAGE, but the knockout tabs remain editable so existing
+  // participants can re-confirm KO predictions after a bracket correction.
+  var koReopen = !!settings.koReopen;
+  var fullyLocked = isPastDeadline && !koReopen;
+
+  if (fullyLocked) return html`<div class="fade" style=${{maxWidth:440,margin:"0 auto",padding:"80px 16px",textAlign:"center"}}>
     <div style=${{fontSize:52,marginBottom:12}}>\ud83d\udd12</div>
     <h2 class="bb" style=${{fontSize:32,marginBottom:12}}>${lang==="es"?"PREDICCIONES CERRADAS":"PREDICTIONS CLOSED"}</h2>
     <p style=${{color:thm.inv(.4),fontSize:14,lineHeight:1.8}}>
-      ${lang==="es"?"El plazo de registro cerr\u00f3 el":"The registration deadline was"}
+      ${lang==="es"?"El plazo de registro cerró el":"The registration deadline was"}
       ${deadline.toLocaleDateString(lang==="es"?"es-CO":"en-CO",{day:"numeric",month:"long",year:"numeric"})}.<br/>
       ${lang==="es"?"Ya no es posible registrar o modificar predicciones.":"No new predictions can be registered or modified."}
     </p>
@@ -40,6 +46,9 @@ function PredictView(p) {
       <${Btn} onClick=${function(){setView("bracket");}}>\ud83c\udfc6 ${t.bracket}</${Btn}>
     </div>
   </div>`;
+
+  // When in KO-reopen mode, group-stage scores are read-only.
+  var groupsLocked = isPastDeadline && koReopen;
 
   // Cascade from current predictions
   var C = useMemo(function(){
@@ -99,6 +108,10 @@ function PredictView(p) {
       ex = participants.find(function(x){
         return x.email && x.email.toLowerCase()===lookupEmail.toLowerCase();
       });
+    }
+    if(groupsLocked && !ex){
+      setErr(lang==="es"?"La fase de grupos ya está cerrada. Solo participantes existentes pueden editar la eliminatoria.":"Group-stage predictions are closed. Only existing participants can edit knockout predictions.");
+      return;
     }
     if(ex){
       setExistId(ex.id);
@@ -239,6 +252,14 @@ function PredictView(p) {
 
   return html`<div class="fade" style=${{maxWidth:780,margin:"0 auto",padding:"16px 16px 60px"}}>
 
+    ${groupsLocked&&html`<div style=${{marginBottom:14,padding:"10px 14px",borderRadius:10,
+      background:"rgba(74,222,128,.08)",border:"1px solid rgba(74,222,128,.25)",
+      color:"#4ade80",fontSize:12,lineHeight:1.6}}>
+      🔓 ${lang==="es"
+        ?"La eliminatoria está reabierta. La fase de grupos queda bloqueada y no se puede modificar."
+        :"Knockout predictions are reopened. Group-stage predictions are locked and cannot be edited."}
+    </div>`}
+
     <div style=${{display:"flex",alignItems:"center",gap:12,marginBottom:18}}>
       <${Btn} v="secondary" onClick=${function(){setStep(0);}} sx=${{padding:"7px 14px",fontSize:13}}>${t.back}</${Btn}>
       <div style=${{flex:1}}>
@@ -279,7 +300,8 @@ function PredictView(p) {
               hv=${preds.groups&&preds.groups[m.id]&&preds.groups[m.id].h||""}
               av=${preds.groups&&preds.groups[m.id]&&preds.groups[m.id].a||""}
               onH=${function(v){setGM(m.id,"h",v);}}
-              onA=${function(v){setGM(m.id,"a",v);}}/>`;
+              onA=${function(v){setGM(m.id,"a",v);}}
+              readOnly=${groupsLocked}/>`;
           })}
         </div>`;
       })}
@@ -339,7 +361,7 @@ function PredictView(p) {
         else if(C.qf &&C.qf[f.id] ){ matchResult=C.qf[f.id]; }
         else if(C.sf &&C.sf[f.id] ){ matchResult=C.sf[f.id]; }
         var sc=preds.ko&&preds.ko[f.id]||{};
-        var displayMatch={id:f.id,home:matchResult&&matchResult.home||null,away:matchResult&&matchResult.away||null};
+        var displayMatch={id:f.id,num:f.num,home:matchResult&&matchResult.home||null,away:matchResult&&matchResult.away||null};
         return html`<${KOMatchRow} key=${f.id}
           match=${displayMatch}
           sc=${sc}

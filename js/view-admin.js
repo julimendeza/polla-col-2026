@@ -77,7 +77,8 @@ function AdminResults(p) {
   var thm=lctx.thm||THEMES.dark;
   var locState=useState({
     groups: Object.assign({}, p.results.groups||{}),
-    ko:     Object.assign({}, p.results.ko||{})
+    ko:     Object.assign({}, p.results.ko||{}),
+    fairplay: Object.assign({}, p.results.fairplay||{})
   });
   var loc=locState[0], setLoc=locState[1];
   var secState=useState("groups"); var sec=secState[0],      setSec=secState[1];
@@ -85,8 +86,8 @@ function AdminResults(p) {
   var koState =useState("r32");    var activeKO=koState[0],  setActiveKO=koState[1];
   var msgState=useState("");       var msg=msgState[0],      setMsg=msgState[1];
 
-  var r32info=useMemo(function(){return getR32(loc.groups);}, [loc.groups]);
-  var C=useMemo(function(){return cascadeKO(loc.groups,loc.ko||{});}, [loc]);
+  var r32info=useMemo(function(){return getR32(loc.groups, loc.fairplay);}, [loc.groups, loc.fairplay]);
+  var C=useMemo(function(){return cascadeKO(loc.groups,loc.ko||{}, loc.fairplay);}, [loc]);
   var gIdx=GROUPS.indexOf(activeG);
   var koRoundDef=KO_ROUNDS.find(function(r){return r.id===activeKO;})||KO_ROUNDS[0];
   var koIdx=KO_ROUNDS.findIndex(function(r){return r.id===activeKO;});
@@ -108,6 +109,14 @@ function AdminResults(p) {
       return Object.assign({},prev,{ko:nk});
     });
   }
+  function setFP(group,team,val){
+    setLoc(function(prev){
+      var nfp=Object.assign({},prev.fairplay||{});
+      nfp[group]=Object.assign({},nfp[group]||{});
+      nfp[group][team]=val; // store score directly as a number
+      return Object.assign({},prev,{fairplay:nfp});
+    });
+  }
 
   return html`<div>
     <div style=${{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
@@ -119,7 +128,7 @@ function AdminResults(p) {
     </div>
 
     <div style=${{display:"flex",gap:8,marginBottom:16}}>
-      ${[{id:"groups",l:t.groupsS},{id:"knockout",l:t.knockoutS}].map(function(s){
+      ${[{id:"groups",l:t.groupsS},{id:"knockout",l:t.knockoutS},{id:"fairplay",l:"🟨 Fair Play"}].map(function(s){
         return html`<button key=${s.id} onClick=${function(){setSec(s.id);}} style=${{
           flex:1,padding:"10px 16px",borderRadius:10,cursor:"pointer",
           border:"2px solid "+(sec===s.id?thm.accent:thm.inv(.1)),
@@ -146,7 +155,7 @@ function AdminResults(p) {
           })}
         </div>`;
       })}
-      <${StandingsTable} group=${activeG} preds=${loc.groups} allPreds=${loc.groups}/>
+      <${StandingsTable} group=${activeG} preds=${loc.groups} allPreds=${loc.groups} fairplay=${loc.fairplay}/>
       <div style=${{display:"flex",justifyContent:"space-between",marginTop:14}}>
         <${Btn} v="secondary" disabled=${gIdx===0} onClick=${function(){setActiveG(GROUPS[gIdx-1]);}} sx=${{padding:"7px 14px",fontSize:13}}>- ${GROUPS[gIdx-1]||""}</${Btn}>
         <${Btn} v="secondary" disabled=${gIdx===11} onClick=${function(){setActiveG(GROUPS[gIdx+1]);}} sx=${{padding:"7px 14px",fontSize:13}}>${GROUPS[gIdx+1]||""} -</${Btn}>
@@ -188,7 +197,7 @@ function AdminResults(p) {
         else if(C.qf&&C.qf[f.id])   matchObj=C.qf[f.id];
         else if(C.sf&&C.sf[f.id])   matchObj=C.sf[f.id];
         var sc=loc.ko&&loc.ko[f.id]||{};
-        var disp={id:f.id,home:matchObj&&matchObj.home||null,away:matchObj&&matchObj.away||null};
+        var disp={id:f.id,num:f.num,home:matchObj&&matchObj.home||null,away:matchObj&&matchObj.away||null};
         return html`<${KOMatchRow} key=${f.id} match=${disp} sc=${sc} isResult=${true}
           onChange=${function(val){setKOR(f.id,val);}}/>`;
       })}
@@ -196,6 +205,52 @@ function AdminResults(p) {
         ${koIdx>0&&html`<${Btn} v="secondary" onClick=${function(){setActiveKO(KO_ROUNDS[koIdx-1].id);}} sx=${{padding:"9px 14px",fontSize:13}}>- ${KO_ROUNDS[koIdx-1].label}</${Btn}>`}
         ${koIdx<KO_ROUNDS.length-1&&html`<${Btn} onClick=${function(){setActiveKO(KO_ROUNDS[koIdx+1].id);}} sx=${{flex:"1",padding:"11px"}}>- ${KO_ROUNDS[koIdx+1].label}</${Btn}>`}
       </div>
+    </${Card}>`}
+
+    ${sec==="fairplay"&&html`<${Card}>
+      <p style=${{fontSize:13,color:thm.inv(.55),marginBottom:4}}>
+        ${lang==="es"
+          ?"Ingresa el puntaje oficial de fair play de cada equipo. Se usa como criterio de desempate si dos equipos quedan igualados en puntos, DG y GF."
+          :"Enter each team's official fair-play score. It is used as a tiebreaker if teams are level on points, GD and GF."}
+      </p>
+      <p style=${{fontSize:11,color:thm.inv(.32),marginBottom:14}}>
+        ${lang==="es"
+          ?"Usa números negativos, por ejemplo -3. El número menos negativo queda mejor en el desempate."
+          :"Use negative numbers, for example -3. The less negative number ranks higher in the tiebreaker."}
+      </p>
+      ${GROUPS.map(function(g){
+        return html`<div key=${g} style=${{marginBottom:18}}>
+          <div style=${{fontSize:11,fontWeight:700,color:thm.inv(.4),letterSpacing:".08em",marginBottom:8,textTransform:"uppercase"}}>
+            ${lang==="es"?"Grupo":"Group"} ${g}
+          </div>
+          ${TBG[g].map(function(team){
+            var fpRaw=(loc.fairplay&&loc.fairplay[g]&&loc.fairplay[g][team]);
+            var fp=(typeof fpRaw==="number")?fpRaw:0;
+            return html`<div key=${team} style=${{display:"flex",alignItems:"center",gap:10,marginBottom:5,padding:"7px 10px",borderRadius:10,background:thm.inv(.04),border:thm.bdr(1,.06)}}>
+              <${FlagImg} team=${team}/>
+              <span style=${{flex:1,fontSize:13,fontWeight:500}}>${teamName(team,lang)}</span>
+              <div style=${{display:"flex",alignItems:"center",gap:6}}>
+                <span style=${{fontSize:11,color:thm.inv(.4),marginRight:2}}>FP</span>
+                <input type="number" max="0" inputmode="numeric" value=${fp===0?"":fp}
+                  placeholder="0"
+                  onInput=${function(e){
+                    var v=e.target.value;
+                    if(v===""||v==="-"){ setFP(g,team,0); return; }
+                    var n=parseInt(v,10);
+                    setFP(g,team,isNaN(n)?0:n);
+                  }}
+                  style=${{width:60,textAlign:"center",padding:"4px 8px",borderRadius:7,
+                    border:"1.5px solid rgba(248,113,113,.3)",background:"rgba(248,113,113,.06)",
+                    color:"#f87171",fontFamily:"'DM Sans',sans-serif",fontSize:14,fontWeight:700}}/>
+                <span style=${{fontSize:11,fontWeight:700,minWidth:36,textAlign:"right",
+                  color:fp<0?"#f87171":thm.inv(.3)}}>
+                  ${fp<0?fp:"-"}
+                </span>
+              </div>
+            </div>`;
+          })}
+        </div>`;
+      })}
     </${Card}>`}
   </div>`;
 }
@@ -564,11 +619,11 @@ function AdminPicks(p) {
 
   // Check actual results for highlighting
   var rC = useMemo(function(){
-    return cascadeKO(p.results.groups, p.results.ko||{});
+    return cascadeKO(p.results.groups, p.results.ko||{}, p.results.fairplay);
   }, [p.results]);
 
   var cols=[
-    {key:"r32teams",   label:"R32",   short:"R32"},
+    {key:"r32qualifiers", label:"R32",   short:"R32"},
     {key:"r16teams",   label:"R16",   short:"R16"},
     {key:"qfteams",    label:es?"Cuartos":"QF",  short:"QF"},
     {key:"sfteams",    label:es?"Semis":"SF",     short:"SF"},
@@ -1190,8 +1245,27 @@ function AdminSettings(p) {
         style=${{ fontFamily:"monospace", fontSize:13 }}/>
     </${Field}>
     <div style=${{fontSize:11,color:thm.inv(.3),marginBottom:16,lineHeight:1.7}}>
-      Después de esta fecha, el botón de predicciones se oculta y no se aceptan nuevas.
+      Después de esta fecha, el botón de predicciones se oculta y no se aceptan nuevas, salvo que se reactive temporalmente la edición de eliminatoria.
     </div>
+
+    <div style=${{marginBottom:18,padding:"12px 14px",borderRadius:12,
+      background:loc.koReopen?"rgba(74,222,128,.08)":thm.inv(.03),
+      border:"1.5px solid "+(loc.koReopen?"rgba(74,222,128,.4)":thm.inv(.1))}}>
+      <label style=${{display:"flex",gap:10,alignItems:"flex-start",cursor:"pointer"}}>
+        <input type="checkbox" checked=${!!loc.koReopen}
+          onChange=${function(e){ var v=e.target.checked; setLoc(function(prev){ return Object.assign({},prev,{koReopen:v}); }); }}
+          style=${{width:18,height:18,marginTop:2}}/>
+        <div>
+          <div style=${{fontWeight:700,fontSize:14,color:loc.koReopen?"#4ade80":thm.inv(.7)}}>
+            🔓 Reabrir predicciones de eliminatoria
+          </div>
+          <div style=${{fontSize:11,color:thm.inv(.35),lineHeight:1.6,marginTop:3}}>
+            Permite que los participantes editen las llaves después de la fecha límite, mientras la fase de grupos queda bloqueada. Úsalo después de corregir el bracket y desactívalo antes de que empiece la Ronda de 32.
+          </div>
+        </div>
+      </label>
+    </div>
+
     <${Field} label=${t.adminEmailSettings}>
       <input type="email" value=${loc.adminEmail||""}
         onInput=${function(e){ setLoc(function(prev){ return Object.assign({},prev,{adminEmail:e.target.value}); }); }}

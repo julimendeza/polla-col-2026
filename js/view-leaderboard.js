@@ -6,7 +6,7 @@ function LeaderboardView(p) {
   var results      = p.results;
   var settings     = p.settings;
 
-  var rC = useMemo(function(){ return cascadeKO(results.groups, results.ko||{}); }, [results]);
+  var rC = useMemo(function(){ return cascadeKO(results.groups, results.ko||{}, results.fairplay); }, [results]);
   var ranked = useMemo(function(){
     return participants
       .map(function(x){ return Object.assign({}, x, calcScore(x.preds, results, settings.scoring)); })
