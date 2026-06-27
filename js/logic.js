@@ -320,6 +320,19 @@ function calcScore(preds, results, sc) {
     var twHit = pC.thirdWin && rC.thirdWin && pC.thirdWin===rC.thirdWin;
     detail.thirdWin   = { hits:twHit?1:0, earned:twHit?(sc.thirdWin||0):0 };
     ['r32','r16','qf','sf','thirdMatch','final','champion','thirdWin'].forEach(function(k){ pts+=detail[k].earned; });
+
+    // Per-match scoring for KO matches (result + goals + GD, same as group stage, up to 7 per match)
+    var koMatchPts = 0;
+    var allKOIds = R32_FIXTURES.map(function(f){return f.id;})
+      .concat(KO_BRACKET.r16.map(function(f){return f.id;}))
+      .concat(KO_BRACKET.qf.map(function(f){return f.id;}))
+      .concat(KO_BRACKET.sf.map(function(f){return f.id;}))
+      .concat([KO_BRACKET.final.id, KO_BRACKET.s3rd.id]);
+    allKOIds.forEach(function(id){
+      koMatchPts += scoreMatch(preds.ko&&preds.ko[id], results.ko&&results.ko[id]);
+    });
+    detail.koMatches = { earned: koMatchPts };
+    pts += koMatchPts;
   } else {
     ['r32','r16','qf','sf','thirdMatch','final','champion','thirdWin'].forEach(function(k){ detail[k]={hits:0,earned:0}; });
   }
