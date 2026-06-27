@@ -167,7 +167,7 @@ async function generateTCPDF(settings, lang) {
     s2b3:"El cuadro de la Ronda de 32 est\u00e1 determinado por las reglas oficiales de la FIFA 2026 y se calcula autom\u00e1ticamente a partir de las predicciones de grupos.",
     s2b4:"Las predicciones se bloquean en el plazo de inscripci\u00f3n. No se permiten cambios despu\u00e9s.",
     s2b5:"Se puede usar el mismo correo electr\u00f3nico para actualizar predicciones antes del plazo.",
-    s3:"3. Puntuaci\u00f3n \u2014 Fase de Grupos (por partido, m\u00e1x 7 pts)",
+    s3:"3. Puntuaci\u00f3n \u2014 Fase de Grupos y Eliminatoria (por partido, m\u00e1x 7 pts)",
     s3b1:"Resultado Correcto (Ganador correcto o empate): 3 puntos",
     s3b2:"Goles del Equipo A correctos: 1 punto",
     s3b3:"Goles del Equipo B correctos: 1 punto",
