@@ -173,7 +173,14 @@ async function generateTCPDF(settings, lang) {
     s3b3:"Goles del Equipo B correctos: 1 punto",
     s3b4:"Diferencia de goles correcta (si el resultado es correcto): 2 puntos",
     s3b5:"Marcador exacto = 7 puntos. Solo resultado correcto = 3 puntos.",
-    s4:"4. Puntuaci\u00f3n \u2014 Fase Eliminatoria (por equipo que avanza)",
+    s4:"4. Puntuaci\u00f3n \u2014 Fase Eliminatoria",
+    s4intro:"La puntuaci\u00f3n eliminatoria tiene DOS componentes que se suman:",
+    s4a:"A) Por partido \u2014 igual que grupos (m\u00e1x 7 pts por partido, 32 partidos en total):",
+    s4a1:"Resultado correcto (equipo ganador o eliminado): 3 puntos",
+    s4a2:"Goles exactos del Equipo A: 1 punto",
+    s4a3:"Goles exactos del Equipo B: 1 punto",
+    s4a4:"Diferencia de goles exacta (si el resultado es correcto): 2 puntos",
+    s4b:"B) Puntos adicionales por equipos que avanzan correctamente:",
     s4b1:"Ronda de 32: 1 punto por equipo predicho correctamente",
     s4b2:"Ronda de 16: 2 puntos por equipo",
     s4b3:"Cuartos de Final: 4 puntos por equipo",
@@ -235,7 +242,14 @@ async function generateTCPDF(settings, lang) {
     s3b3:"Correct goals scored by Team B: 1 point",
     s3b4:"Correct goal difference (if result correct): 2 points",
     s3b5:"Exact scoreline = 7 points. Correct result only = 3 points.",
-    s4:"4. Scoring \u2014 Knockout Stage (per team advancing)",
+    s4:"4. Scoring \u2014 Knockout Stage",
+    s4intro:"Knockout scoring has TWO components that are added together:",
+    s4a:"A) Per match \u2014 same as group stage (max 7 pts per match, 32 matches total):",
+    s4a1:"Correct result (Win / Draw / Loss): 3 points",
+    s4a2:"Correct goals scored by Team A: 1 point",
+    s4a3:"Correct goals scored by Team B: 1 point",
+    s4a4:"Correct goal difference (if result correct): 2 points",
+    s4b:"B) Additional points for correctly predicted advancing teams:",
     s4b1:"Round of 32: 1 point per team correctly predicted",
     s4b2:"Round of 16: 2 points per team",
     s4b3:"Quarter-Finals: 4 points per team",
@@ -296,7 +310,7 @@ async function generateTCPDF(settings, lang) {
     h2(TX.s1);bullet(TX.s1b1);bullet(TX.s1b2);bullet(TX.s1b3);bullet(TX.s1b4);bullet(TX.s1b5);chk();
     h2(TX.s2);bullet(TX.s2b1);bullet(TX.s2b2);bullet(TX.s2b3);bullet(TX.s2b4);bullet(TX.s2b5);chk();
     h2(TX.s3);bullet(TX.s3b1);bullet(TX.s3b2);bullet(TX.s3b3);bullet(TX.s3b4);bullet(TX.s3b5);chk();
-    h2(TX.s4);bullet(TX.s4b1);bullet(TX.s4b2);bullet(TX.s4b3);bullet(TX.s4b4);bullet(TX.s4b5);bullet(TX.s4b6);bullet(TX.s4b7);bullet(TX.s4b8);
+    h2(TX.s4);body(TX.s4intro);body(TX.s4a);bullet(TX.s4a1);bullet(TX.s4a2);bullet(TX.s4a3);bullet(TX.s4a4);body(TX.s4b);bullet(TX.s4b1);bullet(TX.s4b2);bullet(TX.s4b3);bullet(TX.s4b4);bullet(TX.s4b5);bullet(TX.s4b6);bullet(TX.s4b7);bullet(TX.s4b8);
     // Force section 5 onto a new page
     doc.addPage(); y=22;
     h2(TX.s5);body(TX.s5body);bullet(TX.s5b1);bullet(TX.s5b2);bullet(TX.s5b3);bullet(TX.s5b4);bullet(TX.s5b5);bullet(TX.s5b6);chk();
