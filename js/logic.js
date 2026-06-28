@@ -309,10 +309,10 @@ function calcScore(preds, results, sc) {
       var hits = pT.filter(function(t){return rT.indexOf(t)>=0;}).length;
       return { hits:hits, earned:hits*(ppg||0) };
     }
-    detail.r32        = koHits(pC.r32teams,   rC.r32teams,   sc.r32       ||0);
-    detail.r16        = koHits(pC.r16teams,   rC.r16teams,   sc.r16       ||0);
-    detail.qf         = koHits(pC.qfteams,    rC.qfteams,    sc.qf        ||0);
-    detail.sf         = koHits(pC.sfteams,    rC.sfteams,    sc.sf        ||0);
+    detail.r32        = koHits(pC.r32qualifiers, rC.r32qualifiers, sc.r32       ||0);
+    detail.r16        = koHits(pC.r32teams,      rC.r32teams,      sc.r16       ||0);
+    detail.qf         = koHits(pC.r16teams,      rC.r16teams,      sc.qf        ||0);
+    detail.sf         = koHits(pC.qfteams,       rC.qfteams,       sc.sf        ||0);
     detail.thirdMatch = koHits(pC.thirdTeams, rC.thirdTeams, sc.thirdMatch||0);
     detail.final      = koHits(pC.finalTeams, rC.finalTeams, sc.final     ||0);
     var chHit = pC.champion && rC.champion && pC.champion===rC.champion;
