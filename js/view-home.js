@@ -363,7 +363,7 @@ function BracketPage(p) {
     </div>
 
     ${activeTab === "bracket" && (displayPreds
-      ? html`<${BracketView} preds=${displayPreds} fairplay=${isActual ? (p.results&&p.results.fairplay) : null} results=${p.results} scoring=${p.settings.scoring} showPoints=${!isActual}/>`
+      ? html`<${BracketView} preds=${displayPreds} fairplay=${isActual ? (p.results&&p.results.fairplay) : null} results=${p.results||ER} scoring=${(p.settings&&p.settings.scoring)||DEF.scoring} showPoints=${!isActual}/>`
       : html`<div style=${{ textAlign:"center", padding:"60px", color:thm.inv(.3) }}>${t.bracketNoPreds}</div>`
     )}
 
