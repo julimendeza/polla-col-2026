@@ -1,3 +1,10 @@
+// ── Shared guard: a score object is complete only when BOTH sides are entered ──
+function hasScore(x) {
+  return !!x &&
+    x.h !== "" && x.h !== undefined && x.h !== null &&
+    x.a !== "" && x.a !== undefined && x.a !== null;
+}
+
 // ── Build raw stats for a set of matches ────────────────────────────
 function buildStats(matches, gp) {
   var s = {};
@@ -7,7 +14,7 @@ function buildStats(matches, gp) {
   });
   matches.forEach(function(m) {
     var p = gp && gp[m.id];
-    if (!p || p.h === '' || p.h === undefined) return;
+    if (!hasScore(p)) return;
     var h = +p.h, a = +p.a;
     s[m.home].mp++; s[m.away].mp++;
     s[m.home].gf += h; s[m.home].ga += a; s[m.home].gd += h - a;
@@ -164,7 +171,7 @@ function assignBest3Fallback(qualGroups) {
 // ── Get winner of a KO match score ───────────────────────────────────
 // Returns "home", "away", or null (unresolved / not entered)
 function koWinner(score) {
-  if (!score || score.h === '' || score.h === undefined) return null;
+  if (!hasScore(score)) return null;
   var h = +score.h, a = +score.a;
   if (h > a) return 'home';
   if (a > h) return 'away';
@@ -265,22 +272,22 @@ function cascadeKO(groupPreds, koScores, fairplay) {
 // ── Group stage match scoring ─────────────────────────────────────────
 function oc(h, a) { return h > a ? "H" : h < a ? "A" : "D"; }
 
-function scoreMatch(pred, res) {
-  if (!pred || pred.h === '' || pred.h === undefined) return 0;
-  if (!res  || res.h  === '' || res.h  === undefined) return 0;
+function scoreMatch(pred, res, sc) {
+  if (!hasScore(pred) || !hasScore(res)) return 0;
+  // Per-key fallback to DEF.scoring so older saved settings missing a key keep default values
+  function v(k){ var x = sc && sc[k]; return (x===undefined||x===null||x==="") ? (DEF.scoring[k]||0) : +x; }
   var ph = +pred.h, pa = +pred.a, rh = +res.h, ra = +res.a;
   var po = oc(ph, pa), ro = oc(rh, ra), p = 0;
-  if (po === ro)                            p += 3;
-  if (ph === rh)                            p += 1;
-  if (pa === ra)                            p += 1;
-  if (po === ro && (ph-pa) === (rh-ra))     p += 2;
+  if (po === ro)                            p += v("groupResult");
+  if (ph === rh)                            p += v("groupGoalA");
+  if (pa === ra)                            p += v("groupGoalB");
+  if (po === ro && (ph-pa) === (rh-ra))     p += v("groupDiff");
   return p;
 }
 
-function mSt(pred, res) {
-  if (!pred || pred.h === '' || pred.h === undefined) return null;
-  if (!res  || res.h  === '' || res.h  === undefined) return null;
-  var p = scoreMatch(pred, res);
+function mSt(pred, res, sc) {
+  if (!hasScore(pred) || !hasScore(res)) return null;
+  var p = scoreMatch(pred, res, sc);
   return p >= 6 ? "exact" : p >= 3 ? "result" : p > 0 ? "partial" : "wrong";
 }
 
@@ -292,7 +299,7 @@ function calcScore(preds, results, sc) {
   // Group stage
   var gPts = 0;
   ALL_MATCHES.forEach(function(m) {
-    gPts += scoreMatch(preds.groups&&preds.groups[m.id], results.groups&&results.groups[m.id]);
+    gPts += scoreMatch(preds.groups&&preds.groups[m.id], results.groups&&results.groups[m.id], sc);
   });
   detail.groups = { earned: gPts }; pts += gPts;
 
@@ -309,7 +316,12 @@ function calcScore(preds, results, sc) {
       var hits = pT.filter(function(t){return rT.indexOf(t)>=0;}).length;
       return { hits:hits, earned:hits*(ppg||0) };
     }
-    detail.r32        = koHits(pC.r32qualifiers, rC.r32qualifiers, sc.r32       ||0);
+    // R32 qualification points only once ALL group results are complete — partial group
+    // results produce projected (often wrong) qualifiers and would award phantom points.
+    var groupsComplete = GROUPS.every(function(g){ return groupDone(results.groups||{}, g); });
+    detail.r32        = groupsComplete
+                        ? koHits(pC.r32qualifiers, rC.r32qualifiers, sc.r32     ||0)
+                        : { hits:0, earned:0 };
     detail.r16        = koHits(pC.r32teams,      rC.r32teams,      sc.r16       ||0);
     detail.qf         = koHits(pC.r16teams,      rC.r16teams,      sc.qf        ||0);
     detail.sf         = koHits(pC.qfteams,       rC.qfteams,       sc.sf        ||0);
@@ -321,20 +333,30 @@ function calcScore(preds, results, sc) {
     detail.thirdWin   = { hits:twHit?1:0, earned:twHit?(sc.thirdWin||0):0 };
     ['r32','r16','qf','sf','thirdMatch','final','champion','thirdWin'].forEach(function(k){ pts+=detail[k].earned; });
 
-    // Per-match scoring for KO matches (result + goals + GD, same as group stage, up to 7 per match)
+    // Per-match scoring for KO matches (result + goals + GD, same as group stage, up to 7 per match).
+    // Attributed per round (detail[rd].mpts) so views can split "progression" vs "match scores" per stage.
+    var koRoundIds = {
+      r32:        R32_FIXTURES.map(function(f){return f.id;}),
+      r16:        KO_BRACKET.r16.map(function(f){return f.id;}),
+      qf:         KO_BRACKET.qf.map(function(f){return f.id;}),
+      sf:         KO_BRACKET.sf.map(function(f){return f.id;}),
+      thirdMatch: [KO_BRACKET.s3rd.id],
+      final:      [KO_BRACKET.final.id]
+    };
     var koMatchPts = 0;
-    var allKOIds = R32_FIXTURES.map(function(f){return f.id;})
-      .concat(KO_BRACKET.r16.map(function(f){return f.id;}))
-      .concat(KO_BRACKET.qf.map(function(f){return f.id;}))
-      .concat(KO_BRACKET.sf.map(function(f){return f.id;}))
-      .concat([KO_BRACKET.final.id, KO_BRACKET.s3rd.id]);
-    allKOIds.forEach(function(id){
-      koMatchPts += scoreMatch(preds.ko&&preds.ko[id], results.ko&&results.ko[id]);
+    Object.keys(koRoundIds).forEach(function(rd){
+      var mp = 0;
+      koRoundIds[rd].forEach(function(id){
+        mp += scoreMatch(preds.ko&&preds.ko[id], results.ko&&results.ko[id], sc);
+      });
+      detail[rd].mpts = mp;
+      koMatchPts += mp;
     });
+    detail.champion.mpts = 0; detail.thirdWin.mpts = 0;
     detail.koMatches = { earned: koMatchPts };
     pts += koMatchPts;
   } else {
-    ['r32','r16','qf','sf','thirdMatch','final','champion','thirdWin'].forEach(function(k){ detail[k]={hits:0,earned:0}; });
+    ['r32','r16','qf','sf','thirdMatch','final','champion','thirdWin'].forEach(function(k){ detail[k]={hits:0,earned:0,mpts:0}; });
   }
   return { pts:pts, detail:detail };
 }

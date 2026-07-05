@@ -19,6 +19,10 @@ function LeaderboardView(p) {
   var human = participants.filter(function(x){ return x.id !== "claude_bot"; });
   var total = human.length * settings.entryFee;
 
+  // Prize ranks count humans only — the bot appears unranked and doesn't shift anyone's position
+  var rankOf = {};
+  (function(){ var n=0; ranked.forEach(function(px){ if(px.id!=="claude_bot"){ n++; rankOf[px.id]=n; } }); })();
+
   var koLabels = {
     groups:     t.groupStage,
     r32:        t.r32,
@@ -64,19 +68,20 @@ function LeaderboardView(p) {
 
           ${ranked.map(function(px, i){
             var isOpen = exp === px.id;
+            var rk = rankOf[px.id]; // undefined for the bot
             var pxC=cascadeKO(px.preds&&px.preds.groups,px.preds&&px.preds.ko||{}); var ch=pxC.champion;
-            var chHit  = ch && results.champion && ch === results.champion;
+            var chHit  = ch && rC.champion && ch === rC.champion;
 
             return html`<div key=${px.id}>
 
               <div onClick=${function(){ setExp(isOpen ? null : px.id); }} class="lb-grid" style=${{
                 padding:"13px 18px", borderBottom:thm.bdr(1,.05),
                 alignItems:"center", cursor:"pointer", transition:"background .13s",
-                background: isOpen ? thm.a(.07) : i===0 ? thm.a(.05) : "transparent"
+                background: isOpen ? thm.a(.07) : rk===1 ? thm.a(.05) : "transparent"
               }}>
-                <span style=${{ textAlign:"center", fontWeight:800, fontSize:i<3?20:14,
-                  color: i===0?thm.accent:i===1?"#94a3b8":i===2?"#b45309":thm.inv(.22) }}>
-                  ${i===0?"\ud83e\udd47":i===1?"\ud83e\udd48":i===2?"\ud83e\udd49":i+1}
+                <span style=${{ textAlign:"center", fontWeight:800, fontSize:rk&&rk<=3?20:14,
+                  color: rk===1?thm.accent:rk===2?"#94a3b8":rk===3?"#b45309":thm.inv(.22) }}>
+                  ${!rk?"\ud83e\udd16":rk===1?"\ud83e\udd47":rk===2?"\ud83e\udd48":rk===3?"\ud83e\udd49":rk}
                 </span>
                 <div>
                   <div style=${{ fontWeight:600, fontSize:14, display:"flex", alignItems:"center", gap:6 }}>
@@ -104,11 +109,17 @@ function LeaderboardView(p) {
                 <div style=${{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))", gap:8 }}>
                   ${["groups","r32","r16","qf","sf","thirdMatch","final","champion","thirdWin"].map(function(rid){
                     var d = (px.detail && px.detail[rid]) || { hits:0, earned:0 };
+                    var mp = d.mpts || 0;
+                    var tot = (d.earned||0) + mp;
+                    var hasSplit = ["r32","r16","qf","sf","thirdMatch","final"].indexOf(rid) >= 0;
                     return html`<div key=${rid} style=${{ background:thm.inv(.04), borderRadius:10, padding:"9px 12px" }}>
                       <div style=${{ fontSize:11, color:thm.inv(.35), marginBottom:3 }}>${koLabels[rid] || rid}</div>
-                      <div style=${{ fontWeight:700, fontSize:15, color: d.earned>0 ? thm.accent : thm.inv(.28) }}>
-                        ${d.earned} pts
+                      <div style=${{ fontWeight:700, fontSize:15, color: tot>0 ? thm.accent : thm.inv(.28) }}>
+                        ${tot} pts
                       </div>
+                      ${hasSplit && tot>0 && html`<div style=${{ fontSize:9.5, color:thm.inv(.38), marginTop:2 }}>
+                        ${lang==="es"?"progresi\u00f3n":"progression"} ${d.earned||0} \u00b7 ${lang==="es"?"marcadores":"scores"} ${mp}
+                      </div>`}
                     </div>`;
                   })}
                 </div>

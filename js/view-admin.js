@@ -261,9 +261,10 @@ function AdminParts(p) {
   var lctx=useLang();var t=lctx.t;var lang=lctx.lang;
   var thm=lctx.thm||THEMES.dark;
   var ranked = useMemo(function(){
+    var tbC = cascadeKO(p.results.groups, p.results.ko || {}, p.results.fairplay);
     return p.participants
       .map(function(x){ return Object.assign({}, x, calcScore(x.preds, p.results, p.settings.scoring)); })
-      .sort(function(a,b){ return cmpTb(a,b,p.results); });
+      .sort(function(a,b){ return cmpTb(a,b,tbC); });
   }, [p.participants, p.results, p.settings]);
 
   async function del(id) {
@@ -358,8 +359,9 @@ function AdminEmail(p) {
     try {
       await loadEJS();
       window.emailjs.init(cfg.key);
+      var tbC = cascadeKO(p.results.groups, p.results.ko || {}, p.results.fairplay);
       var ranked = human.map(function(x){ return Object.assign({},x,calcScore(x.preds,p.results,p.settings.scoring)); })
-                        .sort(function(a,b){ return cmpTb(a,b,p.results); });
+                        .sort(function(a,b){ return cmpTb(a,b,tbC); });
       var cs = Object.entries(chC).sort(function(a,b){return b[1]-a[1];}).map(function(e){return e[0]+" ("+e[1]+")";}).join(", ");
       var ok = 0;
       for (var i = 0; i < ranked.length; i++) {
@@ -807,7 +809,8 @@ function AdminStats(p) {
   var maxVals={};
   cols.forEach(function(c){
     maxVals[c.key]=Math.max.apply(null,scored.map(function(px){
-      return px.detail&&px.detail[c.key]?px.detail[c.key].earned||0:0;
+      var d=px.detail&&px.detail[c.key]||{};
+      return (d.earned||0)+(d.mpts||0);
     }).concat([1]));
   });
 
@@ -863,7 +866,10 @@ function AdminStats(p) {
                 </div>
               </td>
               ${cols.map(function(c){
-                var v=px.detail&&px.detail[c.key]?px.detail[c.key].earned||0:0;
+                var d=px.detail&&px.detail[c.key]||{};
+                var mp=d.mpts||0;
+                var v=(d.earned||0)+mp;
+                var hasSplit=["r32","r16","qf","sf","thirdMatch","final"].indexOf(c.key)>=0;
                 var ratio=maxVals[c.key]>0?v/maxVals[c.key]:0;
                 var alpha=ratio*0.7;
                 return html`<td key=${c.key} style=${{
@@ -872,7 +878,8 @@ function AdminStats(p) {
                   borderRadius:4
                 }}>
                   ${v>0
-                    ? html`<span style=${{fontWeight:700,color:v===maxVals[c.key]?"#fff":c.color,fontSize:12}}>${v}</span>`
+                    ? html`<span style=${{fontWeight:700,color:v===maxVals[c.key]?"#fff":c.color,fontSize:12}}>${v}</span>
+                      ${hasSplit&&html`<div style=${{fontSize:8,color:thm.inv(.55),marginTop:1,whiteSpace:"nowrap"}}>${d.earned||0}+${mp}</div>`}`
                     : html`<span style=${{color:thm.inv(.15),fontSize:11}}>-</span>`}
                 </td>`;
               })}
@@ -883,6 +890,25 @@ function AdminStats(p) {
           })}
         </tbody>
       </table>
+    </div>
+    <div style=${{display:"flex",alignItems:"center",justifyContent:"center",gap:12,flexWrap:"wrap",
+      marginTop:10,padding:"8px 14px",borderRadius:8,background:thm.inv(.03),border:thm.bdr(1,.07)}}>
+      <span style=${{fontSize:9,fontWeight:700,color:thm.inv(.45),letterSpacing:".04em"}}>${lang==="es"?"LEYENDA":"LEGEND"}</span>
+      <span style=${{display:"flex",alignItems:"center",gap:5}}>
+        <span style=${{fontWeight:700,color:"#60a5fa",fontSize:12}}>82</span>
+        <span style=${{fontSize:10,color:thm.inv(.45)}}>${lang==="es"?"total de la ronda":"round total"}</span>
+      </span>
+      <span style=${{display:"flex",alignItems:"center",gap:5}}>
+        <span style=${{fontSize:9,color:thm.inv(.55)}}>25+57</span>
+        <span style=${{fontSize:10,color:thm.inv(.45)}}>
+          ${lang==="es"
+            ? "progresi\u00f3n (equipos que llegan a la ronda) + marcadores (puntos por partido)"
+            : "progression (teams reaching the round) + match scores (per-match points)"}
+        </span>
+      </span>
+      <span style=${{fontSize:10,color:thm.inv(.3)}}>
+        ${lang==="es"?"Aplica a R32\u2013Final. Grupos, 3ro W y Camp no se dividen.":"Applies to R32\u2013Final. Groups, 3rd W & Champ have no split."}
+      </span>
     </div>
   </div>`;
 }
