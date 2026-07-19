@@ -615,14 +615,9 @@ function BracketView(p) {
             ${C.s3rd&&C.s3rd.score&&C.s3rd.home&&C.s3rd.away&&html`<div style=${{display:'flex',alignItems:'center',gap:4,
               background:'rgba(180,83,9,.14)',border:'1px solid rgba(180,83,9,.3)',
               borderRadius:6,padding:'3px 10px',marginBottom:6,width:'100%',justifyContent:'center'}}>
-              <span style=${{fontSize:9,color:'rgba(255,255,255,.5)'}}>${teamName(C.s3rd.home,lang)}</span>
+              <span style=${{fontSize:9,color:thm.inv(.5)}}>${teamName(C.s3rd.home,lang)}</span>
               <span style=${{fontWeight:800,fontSize:14,color:'#fb923c',letterSpacing:2}}>${C.s3rd.score.h}-${C.s3rd.score.a}</span>
-              ${(function(){
-                var r=pResults.ko&&pResults.ko['s3rd'];
-                var sp=(showPts&&r&&r.h!==''&&r.h!==undefined)?scoreMatch(preds.ko&&preds.ko['s3rd'],r,psc):null;
-                return sp!=null?html`<span style=${koPtChipStyle(sp)}>+${sp}</span>`:null;
-              })()}
-              <span style=${{fontSize:9,color:'rgba(255,255,255,.5)'}}>${teamName(C.s3rd.away,lang)}</span>
+              <span style=${{fontSize:9,color:thm.inv(.5)}}>${teamName(C.s3rd.away,lang)}</span>
             </div>`}
             ${thirds.slice(0,2).filter(Boolean).map(function(t3){
               var isW=t3===thirdWin;
