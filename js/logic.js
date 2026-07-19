@@ -326,7 +326,7 @@ function calcScore(preds, results, sc) {
     detail.qf         = koHits(pC.r16teams,      rC.r16teams,      sc.qf        ||0);
     detail.sf         = koHits(pC.qfteams,       rC.qfteams,       sc.sf        ||0);
     detail.thirdMatch = koHits(pC.thirdTeams, rC.thirdTeams, sc.thirdMatch||0);
-    detail.final      = koHits(pC.finalTeams, rC.finalTeams, sc.final     ||0);
+    detail.final = koHits(pC.sfteams,    rC.sfteams,    sc.final||0);
     var chHit = pC.champion && rC.champion && pC.champion===rC.champion;
     detail.champion   = { hits:chHit?1:0, earned:chHit?(sc.champion||0):0 };
     var twHit = pC.thirdWin && rC.thirdWin && pC.thirdWin===rC.thirdWin;
