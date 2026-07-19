@@ -61,8 +61,8 @@ function SI(p) {
 function MRow(p) {
   var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
   var res = p.res, hv = p.hv || "", av = p.av || "";
-  var st  = (res && res.h !== "" && res.h !== undefined) ? mSt({ h:hv, a:av }, res, p.sc) : null;
-  var pts = st ? scoreMatch({ h:hv, a:av }, res, p.sc) : null;
+  var st  = (res && res.h !== "") ? mSt({ h:hv, a:av }, res) : null;
+  var pts = st ? scoreMatch({ h:hv, a:av }, res) : null;
 
   function pointStyle(v) {
     var greenBase = thm.id === "estadio" ? "34,197,94" : "74,222,128";
@@ -375,22 +375,9 @@ function KOMatchRow(p) {
 }
 
 
-
-// Colour ladder for a KO per-match score chip (0-7): green climbs 3->4->5, gold for a perfect 7.
-function koPtChipStyle(v){
-  var thm = useLang().thm || THEMES.dark;
-  var c = v>=7 ? {b:'rgba(250,204,21,.20)', br:'rgba(250,204,21,.62)', t:'#facc15'} :
-          v>=5 ? {b:'rgba(22,163,74,.20)',  br:'rgba(22,163,74,.55)',  t:'#22c55e'} :
-          v>=4 ? {b:'rgba(74,222,128,.17)', br:'rgba(74,222,128,.50)', t:'#4ade80'} :
-          v>=3 ? {b:'rgba(134,239,172,.14)',br:'rgba(134,239,172,.42)',t:'#86efac'} :
-          v>=1 ? {b:'rgba(96,165,250,.16)', br:'rgba(96,165,250,.42)', t:'#93c5fd'} :
-                 {b:thm.inv(.06),            br:thm.inv(.15),            t:thm.inv(.40)};
-  return {fontSize:8,fontWeight:800,background:c.b,border:'1px solid '+c.br,borderRadius:3,padding:'0 3px',color:c.t,whiteSpace:'nowrap'};
-}
-
 function BCol(p) {
   var _lc=useLang();var lang=_lc.lang;var thm=_lc.thm||THEMES.dark;
-  var teams=p.teams, next=p.next||[], H=p.H, PW=p.PW, PH=p.PH, scores=p.scores||{}, nums=p.nums||[], teamPts=p.teamPts||[], matchPts=p.matchPts||[];
+  var teams=p.teams, next=p.next||[], H=p.H, PW=p.PW, PH=p.PH, scores=p.scores||{}, nums=p.nums||[];
   var n=teams.length;
   var slotH=H/n;
   function isAdv(team){return team&&next.filter(Boolean).length>0&&next.indexOf(team)>=0;}
@@ -416,20 +403,17 @@ function BCol(p) {
             ${score&&html`<span style=${{flexShrink:0,fontSize:8,fontWeight:800,background:thm.a(.3),
               border:thm.bdra(1,.6),borderRadius:3,padding:'0 3px',
               color:'#fde68a',whiteSpace:'nowrap'}}>${score}</span>`}
-            ${teamPts[i]!=null&&html`<span style=${{flexShrink:0,fontSize:7,fontWeight:800,background:thm.inv(.08),
-              border:thm.bdr(1,.25),borderRadius:3,padding:'0 2px',color:'#d6dae0',whiteSpace:'nowrap'}}>+${teamPts[i]}</span>`}
           `
           : html`<span style=${{fontSize:8,color:thm.inv(.18),fontStyle:'italic',flex:1}}>TBD</span>`
         }
       </div>`;
     })}
     ${nums.map(function(num,k){
-      if(num==null && matchPts[k]==null) return null;
+      if(num==null) return null;
       return html`<div key=${'m'+k} style=${{position:'absolute',top:((2*k+1)*slotH-6)+'px',left:0,right:0,height:'12px',
-        display:'flex',alignItems:'center',justifyContent:'center',gap:2,pointerEvents:'none'}}>
-        ${num!=null&&html`<span style=${{fontSize:7,fontWeight:700,color:thm.inv(.38),background:thm.inv(.06),
-          borderRadius:3,padding:'0 3px',fontFamily:"'DM Sans',sans-serif",letterSpacing:'.02em'}}>M${num}</span>`}
-        ${matchPts[k]!=null&&html`<span style=${koPtChipStyle(matchPts[k])}>+${matchPts[k]}</span>`}
+        display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'none'}}>
+        <span style=${{fontSize:7,fontWeight:700,color:thm.inv(.38),background:thm.inv(.06),
+          borderRadius:3,padding:'0 3px',fontFamily:"'DM Sans',sans-serif",letterSpacing:'.02em'}}>M${num}</span>
       </div>`;
     })}
   </div>`;
@@ -474,47 +458,17 @@ function BFinalConn(p) {
 
 // - Full mirrored bracket (driven by cascadeKO) -
 function BracketView(p) {
-  var lctx=useLang(); var t=lctx.t; var lang=lctx.lang; var thm=lctx.thm||THEMES.dark;
+  var lctx=useLang(); var t=lctx.t; var lang=lctx.lang;
+  var thm=lctx.thm||THEMES.dark;
   var preds=p.preds;
   if(!preds) return html`<div style=${{textAlign:'center',padding:'60px 20px',color:thm.inv(.3)}}>${t.bracketNoPreds}</div>`;
 
   var C = useMemo(function(){
     return cascadeKO(preds.groups, preds.ko||{}, p.fairplay);
-  }, [preds, p.fairplay]);
+  }, [preds]);
 
-  // --- KO points overlay (shown only when viewing a player's bracket with results in) ---
-  var showPts = !!p.showPoints;
-  var pResults = p.results || {groups:{}, ko:{}};
-  var psc = p.scoring || {};
-  function scv(k){ var x=psc&&psc[k]; return (x===undefined||x===null||x==='') ? (DEF.scoring[k]||0) : +x; }
-  var rC = useMemo(function(){
-    return showPts ? cascadeKO(pResults.groups||{}, pResults.ko||{}, pResults.fairplay) : null;
-  }, [pResults, showPts]);
-  function inArr(arr, tm){ return !!(tm && arr && arr.indexOf(tm)>=0); }
-  // Same gate as calcScore: R32 qualification only counts once ALL groups are complete
-  var rGroupsComplete = rC ? GROUPS.every(function(g){ return groupDone(pResults.groups||{}, g); }) : false;
-  var reachedR32 = (rC && rGroupsComplete) ? (rC.r32qualifiers||[]) : [];
-  var reachedR16 = rC ? (rC.r32teams||[]) : [];
-  var reachedQF  = rC ? (rC.r16teams||[]) : [];
-  var reachedSF  = rC ? (rC.qfteams||[]) : [];
-  var reachedFin = rC ? (rC.sfteams||[]) : [];
-  var actualCh   = rC ? rC.champion : null;
-  // parallel arrays for BCol: +N per team that actually reached that round, and score pts per match
-  function progArr(teams, reachedSet, bonus){
-    if(!showPts) return [];
-    return teams.map(function(tm){ return inArr(reachedSet, tm) ? (bonus||0) : null; });
-  }
-  function matchArr(matchIds){
-    if(!showPts) return [];
-    return (matchIds||[]).map(function(id){
-      var r=pResults.ko&&pResults.ko[id];
-      if(!r||r.h===''||r.h===undefined||r.a===''||r.a===undefined) return null;
-      return scoreMatch(preds.ko&&preds.ko[id], r, psc);
-    });
-  }
-
-  var ch=C.champion, ru=null;
-  if(C.finalTeams&&C.finalTeams.length>0) ru=C.finalTeams.find(function(x){return x!==ch;})||null;
+  var ch=C.champion;
+  var ru=C.final&&C.final.loser;
   var thirds=C.thirdTeams||[];
   var thirdWin=C.thirdWin;
 
@@ -570,16 +524,16 @@ function BracketView(p) {
     var out = {};
     matchIds.forEach(function(id, i) {
       var sc = preds.ko && preds.ko[id];
-      if (sc && sc.h !== '' && sc.h !== undefined && sc.a !== '' && sc.a !== undefined) {
+      if (sc && sc.h !== '' && sc.h !== undefined) {
         out[i] = sc.h + '-' + sc.a;
       }
     });
     return out;
   }
 
-  function col(label, teams, adv, matchIds, reachedSet, bonus) {
+  function col(label, teams, adv, matchIds) {
     var nums = (matchIds||[]).map(function(id){ return KO_MATCH_NUM[id]; });
-    return html`<${BCol} label=${label} teams=${teams} next=${adv} H=${H} PW=${PW} PH=${PH} scores=${scoreMap(matchIds)} nums=${nums} teamPts=${progArr(teams, reachedSet, bonus)} matchPts=${matchArr(matchIds)}/>`;
+    return html`<${BCol} label=${label} teams=${teams} next=${adv} H=${H} PW=${PW} PH=${PH} scores=${scoreMap(matchIds)} nums=${nums}/>`;
   }
   function cn(outer, inner, dir) {
     return html`<${BConn} outer=${outer} inner=${inner} dir=${dir} H=${H} CW=${CW}/>`;
@@ -588,37 +542,7 @@ function BracketView(p) {
     return html`<${BFinalConn} H=${H} CW=${CW} dir=${dir}/>`;
   }
 
-  // Center + 3rd-place points and header totals (only when showing a player's bracket with results)
-  var champPts=null, ruPts=null, finalScorePts=null, koProgTotal=0, koScoreTotal=0;
-  var reachedThird = rC ? (rC.thirdTeams||[]) : [];
-  var actualThirdWin = rC ? rC.thirdWin : null;
-  var anyKoResult = showPts && pResults.ko && Object.keys(pResults.ko).some(function(k){ var r=pResults.ko[k]; return r&&r.h!==''&&r.h!==undefined&&r.a!==''&&r.a!==undefined; });
-  if(showPts){
-    if(inArr(reachedFin, ch)) champPts=(champPts||0)+scv('final');
-    if(ch && actualCh && ch===actualCh) champPts=(champPts||0)+scv('champion');
-    if(inArr(reachedFin, ru)) ruPts=scv('final');
-    var _fr=pResults.ko&&pResults.ko['final'];
-    if(_fr&&_fr.h!==''&&_fr.h!==undefined&&_fr.a!==''&&_fr.a!==undefined) finalScorePts=scoreMatch(preds.ko&&preds.ko['final'], _fr, psc);
-    [{ts:lR32.concat(rR32),set:reachedR32,b:scv('r32')},{ts:lR16.concat(rR16),set:reachedR16,b:scv('r16')},
-     {ts:lQF.concat(rQF),set:reachedQF,b:scv('qf')},{ts:lSF.concat(rSF),set:reachedSF,b:scv('sf')}
-    ].forEach(function(c){ c.ts.forEach(function(tm){ if(inArr(c.set,tm)) koProgTotal+=(c.b||0); }); });
-    if(inArr(reachedFin,ch)) koProgTotal+=scv('final');
-    if(inArr(reachedFin,ru)) koProgTotal+=scv('final');
-    if(ch&&actualCh&&ch===actualCh) koProgTotal+=scv('champion');
-    thirds.filter(Boolean).forEach(function(t3){ if(inArr(reachedThird,t3)) koProgTotal+=scv('thirdMatch'); });
-    if(thirdWin && actualThirdWin && thirdWin===actualThirdWin) koProgTotal+=scv('thirdWin');
-    lR32ids.concat(rR32ids,lR16ids,rR16ids,lQFids,rQFids,lSFids,rSFids,['final','s3rd']).forEach(function(id){
-      var r=pResults.ko&&pResults.ko[id]; if(r&&r.h!==''&&r.h!==undefined&&r.a!==''&&r.a!==undefined) koScoreTotal+=scoreMatch(preds.ko&&preds.ko[id],r,psc);
-    });
-  }
-  var greenChip={fontSize:9,fontWeight:800,background:thm.inv(.08),border:thm.bdr(1,.25),borderRadius:4,padding:'0 4px',color:'#d6dae0',whiteSpace:'nowrap'};
-
   return html`<div>
-    ${anyKoResult&&html`<div style=${{display:'flex',alignItems:'center',justifyContent:'center',gap:12,flexWrap:'wrap',marginBottom:10,
-      padding:'8px 14px',borderRadius:10,background:thm.a(.08),border:thm.bdra(1,.25)}}>
-      <span style=${{fontSize:13,fontWeight:800,color:thm.accent,fontFamily:"'DM Sans',sans-serif"}}>${lang==="es"?"Eliminatoria":"Knockout"}: ${koProgTotal+koScoreTotal} pts</span>
-      <span style=${{fontSize:11,color:thm.inv(.55)}}>${lang==="es"?"progresión":"progression"} ${koProgTotal} · ${lang==="es"?"marcadores":"scores"} ${koScoreTotal}</span>
-    </div>`}
     <div class="bscroll" style=${{paddingTop:4,paddingBottom:12}}>
 
       <div style=${{display:'flex',alignItems:'flex-end',gap:0,minWidth:'1700px',marginBottom:6}}>
@@ -652,23 +576,22 @@ function BracketView(p) {
 
       <div style=${{display:'flex',alignItems:'flex-start',gap:0,minWidth:'1700px'}}>
 
-        ${col(t.r32, lR32, lR32adv, lR32ids, reachedR32, scv('r32'))}
+        ${col(t.r32, lR32, lR32adv, lR32ids)}
         ${cn(lR32, lR16, 'lr')}
-        ${col(t.r16, lR16, lR16adv, lR16ids, reachedR16, scv('r16'))}
+        ${col(t.r16, lR16, lR16adv, lR16ids)}
         ${cn(lR16, lQF, 'lr')}
-        ${col(t.qf,  lQF,  lQFadv, lQFids, reachedQF, scv('qf'))}
+        ${col(t.qf,  lQF,  lQFadv, lQFids)}
         ${cn(lQF, lSF, 'lr')}
-        ${col(t.sf,  lSF,  lSFadv, lSFids, reachedSF, scv('sf'))}
+        ${col(t.sf,  lSF,  lSFadv, lSFids)}
         ${fc('lr')}
 
         <div style=${{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
           height:H+'px',width:'170px',flexShrink:0,padding:'0 8px'}}>
           <div style=${{padding:'8px 10px',borderRadius:10,textAlign:'center',width:'100%',marginBottom:4,
             background:ch?thm.a(.15):thm.inv(.04),
-            border:'2px solid '+(ch?thm.a(.5):thm.inv(.1))}}>
+            border:(ch?thm.bdra(2,.5):thm.bdr(2,.1))}}>
             ${ch
-              ? html`<${FlagImg} team=${ch}/><div style=${{fontWeight:700,color:thm.accent,fontSize:12,marginTop:3}}>${teamName(ch,lang)}</div>
-                ${champPts!=null&&html`<div style=${{marginTop:4}}><span style=${greenChip}>+${champPts}</span></div>`}`
+              ? html`<${FlagImg} team=${ch}/><div style=${{fontWeight:700,color:thm.accent,fontSize:12,marginTop:3}}>${teamName(ch,lang)}</div>`
               : html`<div style=${{fontSize:9,color:thm.inv(.25),fontStyle:'italic',padding:'4px 0'}}>TBD</div>`}
           </div>       
 
@@ -682,65 +605,50 @@ function BracketView(p) {
               return html`
                 <span style=${{fontSize:9,color:thm.inv(.5)}}>${ch?teamName(ch,lang):'?'}</span>
                 <span style=${{fontWeight:800,fontSize:14,color:thm.accent,letterSpacing:2}}>${cs}-${rs}</span>
-                ${finalScorePts!=null&&html`<span style=${koPtChipStyle(finalScorePts)}>+${finalScorePts}</span>`}
                 <span style=${{fontSize:9,color:thm.inv(.5)}}>${ru?teamName(ru,lang):'?'}</span>
-                ${ruPts!=null&&html`<span style=${greenChip}>+${ruPts}</span>`}
               `;
             })()}
           </div>`}
           
           ${thirds.filter(Boolean).length>0&&html`<div style=${{width:'100%'}}>
             <div style=${{fontSize:9,fontWeight:700,color:'rgba(180,83,9,.7)',textAlign:'center',marginBottom:4}}>${'🥉'} 3rd</div>
+            ${C.s3rd&&C.s3rd.score&&C.s3rd.home&&C.s3rd.away&&html`<div style=${{display:'flex',alignItems:'center',gap:4,
+              background:'rgba(180,83,9,.14)',border:'1px solid rgba(180,83,9,.3)',
+              borderRadius:6,padding:'3px 10px',marginBottom:6,width:'100%',justifyContent:'center'}}>
+              <span style=${{fontSize:9,color:'rgba(255,255,255,.5)'}}>${teamName(C.s3rd.home,lang)}</span>
+              <span style=${{fontWeight:800,fontSize:14,color:'#fb923c',letterSpacing:2}}>${C.s3rd.score.h}-${C.s3rd.score.a}</span>
+              ${(function(){
+                var r=pResults.ko&&pResults.ko['s3rd'];
+                var sp=(showPts&&r&&r.h!==''&&r.h!==undefined)?scoreMatch(preds.ko&&preds.ko['s3rd'],r,psc):null;
+                return sp!=null?html`<span style=${koPtChipStyle(sp)}>+${sp}</span>`:null;
+              })()}
+              <span style=${{fontSize:9,color:'rgba(255,255,255,.5)'}}>${teamName(C.s3rd.away,lang)}</span>
+            </div>`}
             ${thirds.slice(0,2).filter(Boolean).map(function(t3){
               var isW=t3===thirdWin;
-              var t3pts=null;
-              if(showPts){
-                var _b=inArr(reachedThird,t3)?scv('thirdMatch'):0;
-                var _w=(isW && thirdWin && actualThirdWin && thirdWin===actualThirdWin)?scv('thirdWin'):0;
-                if(_b+_w>0) t3pts=_b+_w;
-              }
               return html`<div key=${t3} style=${{display:'flex',alignItems:'center',gap:5,padding:'3px 6px',borderRadius:5,marginBottom:3,
                 background:isW?'rgba(180,83,9,.15)':thm.inv(.04),
                 border:'1px solid '+(isW?'rgba(180,83,9,.4)':thm.inv(.08))}}>
                 <${FlagImg} team=${t3}/>
                 <span style=${{fontSize:9,flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',
                   color:isW?'#fb923c':thm.inv(.5)}}>${teamName(t3,lang)}</span>
-                ${t3pts!=null&&html`<span style=${greenChip}>+${t3pts}</span>`}
+                ${isW&&html`<span style=${{fontSize:8,color:'#fb923c'}}>-</span>`}
               </div>`;
             })}
           </div>`}
         </div>
 
         ${fc('rl')}
-        ${col(t.sf,  rSF,  rSFadv, rSFids, reachedSF, scv('sf'))}
+        ${col(t.sf,  rSF,  rSFadv, rSFids)}
         ${cn(rQF, rSF, 'rl')}
-        ${col(t.qf,  rQF,  rQFadv, rQFids, reachedQF, scv('qf'))}
+        ${col(t.qf,  rQF,  rQFadv, rQFids)}
         ${cn(rR16, rQF, 'rl')}
-        ${col(t.r16, rR16, rR16adv, rR16ids, reachedR16, scv('r16'))}
+        ${col(t.r16, rR16, rR16adv, rR16ids)}
         ${cn(rR32, rR16, 'rl')}
-        ${col(t.r32, rR32, rR32adv, rR32ids, reachedR32, scv('r32'))}
+        ${col(t.r32, rR32, rR32adv, rR32ids)}
 
       </div>
     </div>
-    ${anyKoResult&&html`<div style=${{display:'flex',alignItems:'center',justifyContent:'center',gap:10,flexWrap:'wrap',
-      marginTop:10,padding:'7px 12px',borderRadius:8,background:thm.inv(.03),border:thm.bdr(1,.07)}}>
-      <span style=${{fontSize:9,fontWeight:700,color:thm.inv(.45),letterSpacing:'.04em'}}>${lang==="es"?"LEYENDA":"LEGEND"}</span>
-      <span style=${{display:'flex',alignItems:'center',gap:4}}>
-        <span style=${{fontSize:8,fontWeight:800,background:thm.a(.3),border:thm.bdra(1,.6),borderRadius:3,padding:'0 3px',color:'#fde68a'}}>2-1</span>
-        <span style=${{fontSize:9,color:thm.inv(.45)}}>${lang==="es"?"tu marcador":"your predicted score"}</span>
-      </span>
-      <span style=${{display:'flex',alignItems:'center',gap:4}}>
-        <span style=${greenChip}>+1</span>
-        <span style=${{fontSize:9,color:thm.inv(.45)}}>${lang==="es"?"progresión (equipo llegó a la ronda)":"progression (team reached round)"}</span>
-      </span>
-      <span style=${{display:'flex',alignItems:'center',gap:4}}>
-        <span style=${koPtChipStyle(1)}>+1</span>
-        <span style=${koPtChipStyle(3)}>+3</span>
-        <span style=${koPtChipStyle(5)}>+5</span>
-        <span style=${koPtChipStyle(7)}>+7</span>
-        <span style=${{fontSize:9,color:thm.inv(.45)}}>${lang==="es"?"puntos del marcador (dorado = exacto)":"match score points (gold = exact)"}</span>
-      </span>
-    </div>`}
     <p style=${{fontSize:10,color:thm.inv(.22),marginTop:6,textAlign:'center'}}>${t.bracketSub}</p>
   </div>`;
 }
